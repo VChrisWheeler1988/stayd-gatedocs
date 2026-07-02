@@ -1,596 +1,938 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>STAYD · Gate Documents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#E9EBE5; --card:#FBFCFA; --card-2:#F3F5F0;
-    --ink:#16211C; --ink-soft:#4C594F; --ink-faint:#78857B;
-    --line:#D4D8CF; --line-soft:#E3E6DE;
-    --teal:#0F7D6F; --teal-2:#0B5F55; --teal-soft:#E0EFEB;
-    --amber:#B9770F; --amber-soft:#F6EAD3;
-    --muted:#A2ADA3; --muted-soft:#EAEDE7;
-    --shadow:0 1px 2px rgba(22,33,28,.05),0 8px 24px -12px rgba(22,33,28,.14);
-    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --paper:#E9EDEE;
+    --surface:#FFFFFF;
+    --surface-2:#F4F6F6;
+    --ink:#0E1518;
+    --ink-2:#57666C;
+    --ink-3:#8A979D;
+    --line:#D2DADD;
+    --line-2:#E3E9EA;
+    --marine:#0B5E55;
+    --marine-deep:#083F39;
+    --marine-tint:#E1EFEC;
+    --done:#16915E;
+    --prog:#C77A0A;
+    --block:#C6482E;
+    --idle:#93A0A6;
+    --done-bg:#E3F3EB;
+    --prog-bg:#F8EDD8;
+    --block-bg:#F7E3DD;
+    --idle-bg:#EDF0F1;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(14,21,24,.06), 0 8px 24px -16px rgba(14,21,24,.28);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --disp:'Space Grotesk',system-ui,sans-serif;
     --body:'Inter',system-ui,sans-serif;
   }
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
-  ::selection{background:var(--teal);color:#fff}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
-
-  /* header */
-  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#EDEFE9,#E9EBE5);}
-  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-2);font-weight:600;}
-  .top-inner{padding:28px 0 22px}
-  h1{font-family:var(--disp);font-weight:600;font-size:36px;line-height:1.02;letter-spacing:-.02em;margin:8px 0 6px;}
-  .sub{color:var(--ink-soft);font-size:14.5px;max-width:60ch;}
-
-  /* tab bar */
-  .tabs{position:sticky;top:0;z-index:20;background:rgba(233,235,229,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
-  .tabs-inner{display:flex;gap:2px;overflow-x:auto;padding:0;scrollbar-width:thin}
-  .tabs-inner::-webkit-scrollbar{height:5px}
-  .tabs-inner::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
-  .tab{flex:0 0 auto;border:none;background:none;cursor:pointer;padding:13px 15px 11px;font-family:var(--body);font-size:13.5px;
-       font-weight:500;color:var(--ink-soft);position:relative;white-space:nowrap;border-bottom:2.5px solid transparent;transition:.15s}
-  .tab:hover{color:var(--ink)}
-  .tab.active{color:var(--ink);border-bottom-color:var(--teal)}
-  .tab.rollup{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--teal-2)}
-  .tab.rollup.active{color:var(--teal-2)}
-  .tab .tab-pct{display:inline-block;margin-left:7px;font-family:var(--mono);font-size:10px;color:var(--ink-faint);
-                background:var(--muted-soft);padding:1px 5px;border-radius:4px;vertical-align:middle}
-  .tab.active .tab-pct{background:var(--teal-soft);color:var(--teal-2)}
-
-  /* toolbar */
-  .toolbar{border-bottom:1px solid var(--line);background:var(--card-2)}
-  .toolbar-inner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0}
-  .btn{font-family:var(--body);font-size:12.5px;font-weight:500;border:1px solid var(--line);background:var(--card);color:var(--ink);
-       padding:6px 11px;border-radius:8px;cursor:pointer;transition:.15s;display:inline-flex;gap:6px;align-items:center}
-  .btn:hover{border-color:var(--teal);color:var(--teal-2)}
-  .btn svg{width:13px;height:13px}
-  .toolbar-note{margin-left:auto;font-size:12px;color:var(--ink-faint)}
-  .ctx{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
-  .ctx b{color:var(--teal-2)}
-
-  main{padding-bottom:20px}
-
-  /* view head */
-  .view-head{padding:26px 0 6px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
-  .view-title{font-family:var(--disp);font-weight:600;font-size:26px;letter-spacing:-.015em}
-  .view-sub{color:var(--ink-soft);font-size:13.5px}
-  .brand-meter{margin-left:auto;min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow)}
-  .bm-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-  .bm-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
-  .bm-pct{font-family:var(--disp);font-weight:600;font-size:23px;line-height:1}
-  .bar{height:8px;border-radius:99px;background:var(--muted-soft);overflow:hidden}
-  .bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-2));border-radius:99px;width:0;transition:width .5s cubic-bezier(.4,0,.2,1)}
-  .bm-foot{margin-top:8px;font-size:11.5px;color:var(--ink-soft)}
-  .bm-foot b{font-family:var(--mono);color:var(--ink)}
-
-  /* segments */
-  .segment{padding:26px 0 0}
-  .seg-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-  .seg-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#fff;background:var(--ink);padding:5px 10px;border-radius:6px}
-  .seg-tag.mid{background:var(--amber)}
-  .seg-title{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-.01em}
-  .seg-window{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-left:auto}
-
-  /* initiative card */
-  .init{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
-  .init-head{padding:16px 18px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
-  .init-head:hover{background:var(--card-2)}
-  .ih-titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .ih-title{font-family:var(--disp);font-weight:600;font-size:18px;letter-spacing:-.01em}
-  .chip{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;font-weight:500;white-space:nowrap}
-  .chip.time{background:var(--muted-soft);color:var(--ink-soft)}
-  .chip.cadence{background:var(--teal-soft);color:var(--teal-2)}
-  .ih-obj{color:var(--ink-soft);font-size:13px;margin-top:6px;max-width:70ch}
-  .ih-right{display:flex;align-items:center;gap:14px}
-  .ih-pct{font-family:var(--disp);font-weight:600;font-size:16px;text-align:right;min-width:42px}
-  .ih-pct small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;font-weight:400;margin-top:1px}
-  .caret{width:21px;height:21px;color:var(--ink-faint);transition:transform .25s;flex:0 0 auto}
-  .init.open .caret{transform:rotate(180deg)}
-
-  .rail{display:flex;gap:5px;padding:0 18px 15px}
-  .rail-seg{flex:1}
-  .rail-track{height:9px;border-radius:99px;background:var(--muted-soft);overflow:hidden;border:1px solid var(--line-soft)}
-  .rail-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-2));width:0;transition:width .5s cubic-bezier(.4,0,.2,1)}
-  .rail-lab{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
-  .rail-code{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.08em;color:var(--ink-soft)}
-  .rail-code .dot{display:inline-block;width:6px;height:6px;border-radius:99px;background:var(--muted);margin-right:5px;vertical-align:middle}
-  .rail-seg.done .rail-code .dot{background:var(--teal)}
-  .rail-seg.active .rail-code .dot{background:var(--amber)}
-  .rail-nm{font-family:var(--mono);font-size:9px;color:var(--ink-faint)}
-
-  .init-body{display:none;border-top:1px solid var(--line-soft);padding:4px 18px 18px}
-  .init.open .init-body{display:block}
-  .block{margin-top:18px}
-  .block-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;display:flex;align-items:center;gap:9px;margin-bottom:11px}
-  .block-h::after{content:"";flex:1;height:1px;background:var(--line-soft)}
-
-  .agenda{background:var(--card-2);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
-  .agenda summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:13px}
-  .agenda summary::-webkit-details-marker{display:none}
-  .agenda summary .meta{font-family:var(--mono);font-size:10.5px;color:var(--teal-2);font-weight:500}
-  .agenda[open] summary{border-bottom:1px solid var(--line-soft)}
-  .cad-line{padding:10px 14px 0;font-size:12px;color:var(--ink-soft);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-  .cad-line .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint)}
-  .agenda ol{margin:0;padding:10px 14px 13px;counter-reset:ag;list-style:none}
-  .agenda li{position:relative;padding:4px 0 4px 28px;font-size:13px;color:var(--ink)}
-  .agenda li::before{counter-increment:ag;content:counter(ag,decimal-leading-zero);position:absolute;left:0;top:4px;font-family:var(--mono);font-size:10.5px;color:var(--teal-2);font-weight:600}
-
-  .gate{margin-top:12px;border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
-  .gate-h{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--card-2)}
-  .gate-code{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#fff;background:var(--muted);padding:3px 7px;border-radius:5px}
-  .gate.done .gate-code{background:var(--teal)}
-  .gate.active .gate-code{background:var(--amber)}
-  .gate-name{font-family:var(--disp);font-weight:500;font-size:14.5px}
-  .gate-count{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)}
-  .ms{list-style:none;margin:0;padding:2px 0}
-  .ms li{display:flex;gap:10px;align-items:flex-start;padding:8px 13px;cursor:pointer;border-top:1px solid var(--line-soft)}
-  .ms li:first-child{border-top:none}
-  .ms li:hover{background:var(--card-2)}
-  .ck{flex:0 0 auto;width:18px;height:18px;border:1.7px solid var(--line);border-radius:5px;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:.12s;background:var(--card)}
-  .ms li:hover .ck{border-color:var(--teal)}
-  .ck svg{width:11px;height:11px;color:#fff;opacity:0;transition:.12s}
-  .ms li.done .ck{background:var(--teal);border-color:var(--teal)}
-  .ms li.done .ck svg{opacity:1}
-  .ms-label{font-size:13.5px;line-height:1.45}
-  .ms li.done .ms-label{color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--muted)}
-  .ms li .del{margin-left:auto;flex:0 0 auto;width:20px;height:20px;border-radius:5px;display:none;align-items:center;justify-content:center;color:var(--ink-faint)}
-  .ms li.custom .del{display:flex}
-  .ms li .del:hover{background:var(--amber-soft);color:var(--amber)}
-  .ms li .del svg{width:12px;height:12px}
-
-  .add-ms{display:flex;gap:8px;padding:9px 13px;border-top:1px solid var(--line-soft);background:var(--card-2)}
-  .add-ms input{flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-family:var(--body);font-size:13px;background:var(--card)}
-  .add-ms input:focus{outline:none;border-color:var(--teal)}
-  .add-ms button{font-family:var(--body);font-size:12.5px;font-weight:500;border:1px solid var(--teal);background:var(--teal);color:#fff;border-radius:7px;padding:6px 12px;cursor:pointer}
-  .add-ms button:hover{background:var(--teal-2);border-color:var(--teal-2)}
-  .gate.custom .gate-code{background:var(--ink)}
-
-  textarea.notes{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line-soft);border-radius:10px;padding:11px 13px;font-family:var(--body);font-size:13px;color:var(--ink);background:var(--card-2);line-height:1.55}
-  textarea.notes:focus{outline:none;border-color:var(--teal);background:var(--card)}
-  textarea.notes::placeholder{color:var(--ink-faint)}
-
-  /* rollup */
-  .rollup-grid{display:grid;gap:16px;margin-top:22px}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
-  .panel-h{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:14px}
-  .port-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-  .port-pct{font-family:var(--disp);font-weight:600;font-size:44px;line-height:.9;letter-spacing:-.02em}
-  .port-stats{font-size:13px;color:var(--ink-soft)}
-  .port-stats b{font-family:var(--mono);color:var(--ink)}
-
-  .hm-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
-  table.hm{border-collapse:collapse;width:100%;font-size:12.5px;min-width:560px}
-  table.hm th,table.hm td{border-bottom:1px solid var(--line-soft);padding:0}
-  table.hm thead th{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;background:var(--card-2);padding:9px 8px;text-align:center;vertical-align:bottom}
-  table.hm tbody th{text-align:left;font-weight:500;font-size:13px;white-space:nowrap;color:var(--ink);padding:0 12px;cursor:pointer}
-  table.hm tbody th:hover{color:var(--teal-2)}
-  table.hm tr:last-child th,table.hm tr:last-child td{border-bottom:none}
-  .hm-cell{height:38px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;transition:.12s}
-  .hm-cell:hover{outline:2px solid var(--teal);outline-offset:-2px}
-  .hm-brandpct{font-family:var(--mono);font-size:11px;font-weight:600;text-align:center;color:var(--ink);background:var(--card-2)}
-
-  table.found{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
-  table.found th,table.found td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line-soft)}
-  table.found thead th{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;background:var(--card-2)}
-  table.found tbody th{text-align:left;font-weight:500;font-size:13px;white-space:nowrap;cursor:pointer}
-  table.found tbody th:hover{color:var(--teal-2)}
-  table.found tr:last-child th,table.found tr:last-child td{border-bottom:none}
-  .fdot{width:16px;height:16px;border-radius:5px;margin:0 auto;background:var(--muted-soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
-  .fdot.on{background:var(--teal);border-color:var(--teal)}
-  .fdot svg{width:10px;height:10px;color:#fff;opacity:0}
-  .fdot.on svg{opacity:1}
-
-  footer{border-top:1px solid var(--line);margin-top:26px;padding:20px 0 40px;color:var(--ink-faint);font-size:12px}
-  footer .mono{font-family:var(--mono)}
-
-  @media (max-width:640px){
-    h1{font-size:28px}
-    .init-head{grid-template-columns:1fr}
-    .ih-right{justify-content:flex-end}
-    .rail{flex-wrap:wrap;gap:9px 5px}.rail-seg{flex:1 1 40%}
-    .brand-meter{margin-left:0;width:100%}
-    .port-pct{font-size:36px}
+  html,body{margin:0}
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 60% at 100% 0%, rgba(11,94,85,.06), transparent 60%),
+      var(--paper);
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  .wrap{max-width:1160px;margin:0 auto;padding:22px 20px 80px}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .brandmark{display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:8px;background:var(--marine);position:relative;flex:0 0 auto}
+  .logo::before,.logo::after{content:"";position:absolute;background:#fff;border-radius:2px}
+  .logo::before{left:8px;right:8px;top:9px;height:3px;opacity:.55}
+  .logo::after{left:8px;top:9px;width:3px;bottom:9px}
+  .brandmark h1{font-family:var(--disp);font-weight:700;font-size:26px;letter-spacing:-.02em;margin:0;line-height:1}
+  .brandmark .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--marine);margin:0 0 5px}
+  .toolset{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .save-dot{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);display:flex;align-items:center;gap:6px;margin-right:2px}
+  .save-dot i{width:7px;height:7px;border-radius:50%;background:var(--done);display:inline-block}
+
+  button{font-family:var(--body);cursor:pointer}
+  .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;gap:7px;transition:background .15s,border-color .15s,transform .05s}
+  .btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--marine);border-color:var(--marine);color:#fff}
+  .btn.primary:hover{background:var(--marine-deep);border-color:var(--marine-deep)}
+  .btn.ghost{background:transparent;border-color:transparent;color:var(--ink-2);padding:7px 9px}
+  .btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+  .btn.sm{padding:4px 9px;font-size:11.5px}
+  .btn svg{width:14px;height:14px}
+
+  .lede{color:var(--ink-2);font-size:13.5px;max-width:70ch;margin:14px 0 0}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:4px;margin:20px 0 18px;flex-wrap:wrap;align-items:center}
+  .tab{border:1px solid transparent;background:transparent;border-radius:999px;padding:7px 15px;font-size:13px;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;gap:8px;transition:background .15s,color .15s}
+  .tab:hover{background:var(--surface-2);color:var(--ink)}
+  .tab.active{background:var(--ink);color:#fff}
+  .tab.rollup{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);background:var(--surface)}
+  .tab.rollup.active{background:var(--marine);border-color:var(--marine);color:#fff}
+  .tab .pip{font-family:var(--mono);font-size:10.5px;opacity:.7}
+  .tab.add{color:var(--ink-3);font-weight:500}
+
+  /* ---------- KPI strip ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+  .kpi .val{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:-.02em;margin-top:6px;line-height:1}
+  .kpi .val small{font-size:15px;color:var(--ink-3);font-weight:500;margin-left:2px}
+  .kpi.alert .val{color:var(--block)}
+
+  /* ---------- panels ---------- */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .panel-h h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);margin:0;font-weight:600}
+  .panel-b{padding:16px 18px}
+
+  /* ---------- heatmap ---------- */
+  .heat{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+  .heat th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:500;text-align:center;padding:0 6px 10px;white-space:nowrap}
+  .heat th.brandcol{text-align:left}
+  .heat td{padding:5px 6px;text-align:center}
+  .heat td.brandcell{text-align:left;font-weight:600;font-size:13px;white-space:nowrap;padding-right:14px}
+  .heat td.brandcell .owner{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--ink-3);display:block;text-transform:uppercase;letter-spacing:.04em}
+  .cell{position:relative;height:42px;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--line-2);gap:1px}
+  .cell.has{border-color:transparent}
+  .cell .n{font-family:var(--disp);font-weight:700;font-size:16px;line-height:1}
+  .cell .mini{display:flex;gap:2px;margin-top:2px}
+  .cell .mini i{width:5px;height:5px;border-radius:50%}
+  .cell.empty .n{color:var(--ink-3);font-weight:500;font-size:12px}
+  .heat .totcol{font-family:var(--mono);font-size:11px;color:var(--ink-2);text-align:center}
+  .heat tfoot td{padding-top:10px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-align:center}
+  .heat tfoot td.brandcell{color:var(--ink-2);text-transform:uppercase;letter-spacing:.1em}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2)}
+  .legend span{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  /* ---------- attention list ---------- */
+  .attn{display:flex;flex-direction:column}
+  .attn-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+  .attn-row:last-child{border-bottom:none}
+  .attn-row .flag{width:8px;height:34px;border-radius:3px;flex:0 0 auto}
+  .attn-row .meta{flex:1;min-width:0}
+  .attn-row .t{font-weight:600;font-size:13.5px}
+  .attn-row .sub{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.02em;margin-top:2px}
+  .attn-row .sub b{color:var(--ink-2);font-weight:500}
+  .attn-row .go{flex:0 0 auto}
+  .empty-note{color:var(--ink-3);font-size:13px;font-style:italic;padding:6px 0}
+
+  /* ---------- brand header ---------- */
+  .brandhead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+  .brandhead .titleblock{min-width:0}
+  .brandhead h2.bname{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:-.02em;margin:0;line-height:1.05}
+  .brandhead .ownerline{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:8px;letter-spacing:.02em}
+  .brandhead .ownerline .k{color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;font-size:10px;margin-right:6px}
+  .progwrap{min-width:230px;flex:0 0 auto}
+  .progwrap .ptop{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:11px;color:var(--ink-2);letter-spacing:.04em;margin-bottom:7px}
+  .progwrap .ptop b{font-family:var(--disp);font-size:22px;color:var(--ink);letter-spacing:-.01em}
+  .bar{height:9px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line-2);overflow:hidden}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--marine),#12897c);border-radius:6px;transition:width .4s ease}
+  .brandhead .stat-split{display:flex;gap:14px;margin-top:12px}
+  .brandhead .stat-split span{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px}
+  .brandhead .stat-split i{width:7px;height:7px;border-radius:50%}
+
+  /* ---------- initiative card ---------- */
+  .init{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  .init.blocked{border-left:3px solid var(--block)}
+  .init-h{display:flex;align-items:flex-start;gap:14px;padding:15px 16px;cursor:default}
+  .disc{flex:0 0 auto;width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--ink-2);margin-top:1px;transition:background .15s,transform .2s}
+  .disc:hover{background:var(--marine-tint);color:var(--marine)}
+  .disc svg{width:13px;height:13px;transition:transform .2s}
+  .init.open .disc svg{transform:rotate(90deg)}
+  .init-main{flex:1;min-width:0}
+  .init-title{font-family:var(--disp);font-weight:600;font-size:16.5px;letter-spacing:-.01em;outline:none}
+  .init-title:focus{background:var(--marine-tint);border-radius:4px;box-shadow:0 0 0 2px var(--marine-tint)}
+  .init-sub{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:9px}
+  .field{font-family:var(--mono);font-size:11px;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;letter-spacing:.02em}
+  .field .k{color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em;font-size:9.5px}
+  .field [contenteditable]{outline:none;min-width:20px;border-bottom:1px dashed transparent;padding:1px 2px}
+  .field [contenteditable]:hover{border-bottom-color:var(--line)}
+  .field [contenteditable]:focus{border-bottom-color:var(--marine);background:var(--marine-tint);border-radius:3px}
+  .field [contenteditable]:empty::before{content:attr(data-ph);color:var(--ink-3)}
+
+  /* status chip */
+  .chip{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none;transition:filter .15s;white-space:nowrap}
+  .chip:hover{filter:brightness(.96)}
+  .chip i{width:7px;height:7px;border-radius:50%}
+  .chip.done{background:var(--done-bg);color:var(--done)}.chip.done i{background:var(--done)}
+  .chip.prog{background:var(--prog-bg);color:var(--prog)}.chip.prog i{background:var(--prog)}
+  .chip.block{background:var(--block-bg);color:var(--block)}.chip.block i{background:var(--block)}
+  .chip.idle{background:var(--idle-bg);color:var(--ink-2)}.chip.idle i{background:var(--idle)}
+  .due-soon{color:var(--block)!important}
+
+  /* gate rail */
+  .rail{display:flex;align-items:center;margin:2px 0 0;padding:0}
+  .rail .g{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;flex:1}
+  .rail .g .pip{width:17px;height:17px;border-radius:50%;border:2px solid var(--line);background:var(--surface);cursor:pointer;z-index:2;transition:background .15s,border-color .15s,transform .1s;display:flex;align-items:center;justify-content:center}
+  .rail .g .pip:hover{transform:scale(1.18);border-color:var(--marine)}
+  .rail .g .pip svg{width:9px;height:9px;color:#fff;opacity:0}
+  .rail .g.done .pip{background:var(--marine);border-color:var(--marine)}
+  .rail .g.done .pip svg{opacity:1}
+  .rail .g.current .pip{border-color:var(--marine);background:#fff;box-shadow:0 0 0 4px var(--marine-tint)}
+  .rail .g .glabel{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+  .rail .g.done .glabel,.rail .g.current .glabel{color:var(--marine);font-weight:600}
+  .rail .conn{height:2px;flex:1;background:var(--line);margin:0 -2px;position:relative;top:-11px;z-index:1}
+  .rail .conn.filled{background:var(--marine)}
+
+  .railwrap{margin:14px 0 2px}
+
+  /* body of initiative (milestones + notes) */
+  .init-b{border-top:1px solid var(--line-2);padding:15px 16px 16px;display:none;background:var(--surface-2)}
+  .init.open .init-b{display:block}
+  .sub-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 9px}
+  .ms{display:flex;align-items:flex-start;gap:10px;padding:6px 0}
+  .ms .box{flex:0 0 auto;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
+  .ms .box svg{width:11px;height:11px;color:#fff;opacity:0}
+  .ms.done .box{background:var(--done);border-color:var(--done)}
+  .ms.done .box svg{opacity:1}
+  .ms .txt{flex:1;font-size:13.5px;outline:none;border-radius:4px;padding:1px 3px}
+  .ms .txt:focus{background:var(--marine-tint)}
+  .ms.done .txt{color:var(--ink-3);text-decoration:line-through}
+  .ms .rm{flex:0 0 auto;opacity:0;border:none;background:transparent;color:var(--ink-3);cursor:pointer;font-size:15px;line-height:1;padding:2px 5px;border-radius:5px}
+  .ms:hover .rm{opacity:1}
+  .ms .rm:hover{background:var(--block-bg);color:var(--block)}
+  .add-ms{font-family:var(--mono);font-size:11px;color:var(--marine);background:transparent;border:1px dashed var(--line);border-radius:6px;padding:5px 10px;margin-top:8px;letter-spacing:.03em}
+  .add-ms:hover{background:var(--marine-tint);border-color:var(--marine)}
+
+  .notes-area{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:7px;background:var(--surface);padding:9px 11px;font-family:var(--body);font-size:13px;color:var(--ink);resize:vertical;min-height:54px;line-height:1.5}
+  .notes-area:focus{outline:none;border-color:var(--marine);box-shadow:0 0 0 3px var(--marine-tint)}
+  .init-b .cols{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+  .init-b .rmrow{display:flex;justify-content:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2)}
+  .btn.danger{color:var(--block);border-color:transparent;background:transparent}
+  .btn.danger:hover{background:var(--block-bg);border-color:var(--block-bg)}
+
+  /* ---------- granola intake ---------- */
+  .intake{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+  .intake-h{display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line-2)}
+  .intake-h .ic{width:30px;height:30px;border-radius:8px;background:var(--marine-tint);color:var(--marine);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .intake-h .ic svg{width:16px;height:16px}
+  .intake-h h3{font-family:var(--disp);font-weight:600;font-size:15px;margin:0;letter-spacing:-.01em}
+  .intake-h p{margin:2px 0 0;font-size:11.5px;color:var(--ink-2)}
+  .intake-b{padding:16px 18px}
+  .paste{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);padding:12px 13px;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--ink);resize:vertical;min-height:120px}
+  .paste:focus{outline:none;border-color:var(--marine);background:var(--surface);box-shadow:0 0 0 3px var(--marine-tint)}
+  .intake-actions{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .intake-actions .hint{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.02em}
+
+  .candidates{margin-top:16px;border-top:1px solid var(--line-2);padding-top:16px;display:none}
+  .candidates.show{display:block}
+  .cand-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .cand-top .route{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+  select.sel{font-family:var(--body);font-size:12.5px;border:1px solid var(--line);border-radius:7px;padding:6px 9px;background:var(--surface);color:var(--ink)}
+  select.sel:focus{outline:none;border-color:var(--marine)}
+  .cand{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+  .cand:last-child{border-bottom:none}
+  .cand .cbox{flex:0 0 auto;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;margin-top:2px;display:flex;align-items:center;justify-content:center}
+  .cand .cbox svg{width:11px;height:11px;color:#fff;opacity:0}
+  .cand.on .cbox{background:var(--marine);border-color:var(--marine)}
+  .cand.on .cbox svg{opacity:1}
+  .cand .cmain{flex:1;min-width:0}
+  .cand .ctitle{font-size:13.5px;font-weight:500}
+  .cand .ctags{display:flex;gap:7px;flex-wrap:wrap;margin-top:5px}
+  .ctag{font-family:var(--mono);font-size:10px;letter-spacing:.03em;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-2);display:inline-flex;gap:4px;align-items:center}
+  .ctag b{color:var(--ink);font-weight:600}
+  .ctag.st-done{background:var(--done-bg);color:var(--done);border-color:transparent}
+  .ctag.st-prog{background:var(--prog-bg);color:var(--prog);border-color:transparent}
+  .ctag.st-block{background:var(--block-bg);color:var(--block);border-color:transparent}
+
+  .addbtn-row{margin-top:16px}
+  .flat-empty{text-align:center;padding:36px 20px;color:var(--ink-3)}
+  .flat-empty svg{width:26px;height:26px;margin-bottom:8px;opacity:.6}
+  .flat-empty p{margin:0;font-size:13.5px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:13px;padding:10px 18px;border-radius:999px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99;font-weight:500}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.03em;line-height:1.7}
+
+  @media (max-width:720px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .init-b .cols{grid-template-columns:1fr}
+    .heat{font-size:11px}
+    .rail .g .glabel{font-size:8px}
+    .brandhead .progwrap{min-width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  input[type=file]{display:none}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<header class="top">
-  <div class="wrap top-inner">
-    <div class="eyebrow">Initiative Control · Founders ↔ GMs</div>
-    <h1>Gate Documents</h1>
-    <div class="sub">Stage-gated initiative tracker across all eight STAYD brands. Each brand tab holds its own gates, milestones, and field notes; the Roll-up tab aggregates them into one portfolio view.</div>
+  <div class="topbar">
+    <div class="brandmark">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <p class="eyebrow">Initiative Control · Founders ↔ GMs</p>
+        <h1>Gate Documents</h1>
+      </div>
+    </div>
+    <div class="toolset">
+      <span class="save-dot"><i></i><span id="saveState">Saved</span></span>
+      <button class="btn ghost sm" id="expandAll" title="Expand every initiative">Expand</button>
+      <button class="btn ghost sm" id="collapseAll" title="Collapse every initiative">Collapse</button>
+      <button class="btn sm" id="importBtn" title="Import a JSON state file">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import</button>
+      <button class="btn sm" id="exportBrand" title="Export just this brand">Export brand</button>
+      <button class="btn primary sm" id="exportAll" title="Export the whole portfolio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Export all</button>
+      <input type="file" id="fileInput" accept="application/json,.json" />
+    </div>
   </div>
-</header>
 
-<div class="tabs"><div class="wrap"><div class="tabs-inner" id="tabbar"></div></div></div>
+  <p class="lede">Stage-gated initiative tracker across every STAYD brand. Work a brand in its tab; the roll-up reflects it live. Paste raw Granola notes into a brand to pull milestones straight out of the call — no re-typing.</p>
 
-<div class="toolbar">
-  <div class="wrap toolbar-inner">
-    <span class="ctx" id="ctx"></span>
-    <button class="btn" id="expandAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Expand</button>
-    <button class="btn" id="collapseAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>Collapse</button>
-    <button class="btn" id="exportBrand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Export brand</button>
-    <button class="btn" id="exportAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Export all</button>
-    <button class="btn" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12l-4 4m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Import</button>
-    <input type="file" id="importFile" accept="application/json" style="display:none">
-    <span class="toolbar-note">Saves automatically in this browser.</span>
-  </div>
+  <div class="tabs" id="tabs"></div>
+
+  <div id="view"></div>
+
+  <div class="foot" id="foot"></div>
 </div>
 
-<main class="wrap" id="app"></main>
-
-<footer class="wrap">
-  <span class="mono">STAYD_Gate_Documents.html</span> · self-contained · host on GitHub Pages alongside the Pacing &amp; Cadence dashboards.
-  Work a brand in its tab; the Roll-up tab reflects it live. Use <b>Export brand</b> to hand a single brand's state to that brand's project and re-import updates.
-</footer>
+<div class="toast" id="toast"></div>
 
 <script>
-/* =========================== CONFIG =========================== */
-const BRANDS = ["Beachside VR","Blue Gems","30North","Big Fish","Host2Coast","Haven","Renjoy","Stay Texas"];
+"use strict";
+/* ============================================================
+   STAYD · Gate Documents  — self-contained, offline, GH-Pages ready
+   State model:
+   state = { updated, activeTab, brands:[ {id,name,owner,notes,
+             initiatives:[ {id,title,owner,due,status,gate,open,notes,
+                            milestones:[{id,text,done}] } ] } ] }
+   ============================================================ */
 
-const SEGMENTS = [
-  {id:"near", name:"Near Term Initiatives", window:"0–90 days", tag:"NEAR", initIds:["revpar","takerate","journey"]},
-  {id:"mid",  name:"Mid Term Initiatives",  window:"90–180 days", tag:"MID", initIds:["housekeeping","maintenance"]}
-];
-
-/* short column labels for the roll-up heatmap */
-const INIT_SHORT = {revpar:"RevPAR", takerate:"Take Rate", journey:"Guest Journey", housekeeping:"Housekeeping", maintenance:"Maint."};
-
-const INITIATIVES = {
-  revpar:{
-    name:"RevPAR Lift", seg:"near", timeframe:"Weeks 1–12",
-    objective:"Get this brand instrumented, priced, and governed to shared revenue KPIs, then set goals off history and unit-level lift.",
-    cadence:{rhythm:"Weekly", length:"45 min", when:"Mon · 9:00 AM CT", who:"Founders ↔ GM"},
-    agenda:["Pacing review — brand + units (Key Data)","Same-store YoY bridge — genuine RM lift vs. inventory mix / churn","Unit leaderboard + percentile movers (ahead / behind)","Watchlist + days-since-last-booking (stale units)","OTAmiser progress by unit","Goals vs. actual — week / QTD / YTD","Action items + owners"],
-    gates:[
-      {name:"Access & Foundation", ms:["On Key Data enterprise account","On Guesty (reservations stack)","On Wheelhouse (pricing)","On OTAmiser"]},
-      {name:"Cadence & Instrumentation", ms:["OTAmiser meeting established (recurring)","Internal metric definitions set — Wheelhouse + Key Data/Market + Guesty","Pacing reports live","Same-store revenue goals defined","Daily bookings sales report live","Market-level achievement / opportunity view live","Unit leaderboard built on KPIs"]},
-      {name:"Goals & Governance", ms:["Weekly goals set from history + unit lift targets","Quarterly goals set","Annual goals set"]}
-    ]
-  },
-  takerate:{
-    name:"Take Rate", seg:"near", timeframe:"Weeks 2–14",
-    objective:"Grow net take rate through fee structure, channel mix, and ancillary/upsell activation — without breaking the occupancy-first strategy.",
-    cadence:{rhythm:"Bi-weekly", length:"45 min", when:"Every other Tue · 9:00 AM CT", who:"Founders + Finance + GM"},
-    agenda:["Current take rate — brand + units","Fee structure — who pays, how billed, expenses pulled, % vs. flat","Damage waiver structure + improvement","Booking channel mix + cost per channel","Upsell pipeline — Early Arrival / Late Departure / Gap Night","Travel insurance attach rate","Levers + targets vs. actual"],
-    gates:[
-      {name:"Baseline", ms:["Current take rate established","Fee structure documented — who pays, how billed, expenses pulled","Damage waiver structure documented","Booking channel mix established","Cost per channel + billing method established"]},
-      {name:"Target & Strategy", ms:["Goal take rate set","% vs. flat-fee analysis — headroom given occupancy strategy","Levers / opportunities identified & prioritized","Damage waiver improvement plan"]},
-      {name:"Upsell & Ancillary Activation", ms:["Key upsell opportunities identified","Early Arrival / Late Departure / Gap Night automation designed","Targeted discount logic defined per upsell","Travel insurance sales enabled"]}
-    ]
-  },
-  journey:{
-    name:"Guest Journey", seg:"near", timeframe:"Weeks 3–12",
-    objective:"Map the current journey, design the ideal state by segment and property type, and instrument comms + recovery with KPIs.",
-    cadence:{rhythm:"Bi-weekly", length:"45 min", when:"Every other Thu · 9:00 AM CT", who:"Guest Experience lead + GM"},
-    agenda:["Current-state journey walkthrough","Ideal-state design — by segment / add-on / property type","Guest communication KPIs vs. target","Problem / recovery KPIs vs. target","Gaps + fixes + owners"],
-    gates:[
-      {name:"Current State", ms:["Current guest journey mapped (visual representation)"]},
-      {name:"Ideal State Design", ms:["Ideal-state journey built — workflow + waterfall by segment / add-on / property type"]},
-      {name:"Measurement", ms:["Guest communication KPIs defined & instrumented","Guest problem / recovery KPIs defined & instrumented"]}
-    ]
-  },
-  housekeeping:{
-    name:"Housekeeping Process", seg:"mid", timeframe:"Months 3–6",
-    objective:"Standardize HK QA and benchmarks, drive reviews, and lift housekeeping margin to target.",
-    cadence:{rhythm:"Monthly", length:"45 min", when:"1st week of month · 9:00 AM CT", who:"Ops + GM"},
-    agenda:["Existing QA review","KPIs / measurables vs. benchmark","Review-generation efforts","Amenities current state","HK margin — current → benchmark → plan"],
-    gates:[
-      {name:"Current State", ms:["Existing QA documented","Amenities current state documented","Current HK margins captured"]},
-      {name:"Benchmark & Measure", ms:["Measurables / KPIs defined","Benchmark method established","Review-generation efforts in place"]},
-      {name:"Margin Target", ms:["HK margin benchmark target set","Path-to-target plan defined"]}
-    ]
-  },
-  maintenance:{
-    name:"Maintenance", seg:"mid", timeframe:"Months 3–6",
-    objective:"Define maintenance standards and margins and set a margin target.",
-    cadence:{rhythm:"Monthly", length:"30 min", when:"1st week of month · 9:00 AM CT", who:"Ops + GM"},
-    agenda:["Maintenance standards review","Margins vs. target","Open issues + owners"],
-    gates:[
-      {name:"Standards", ms:["Maintenance standards defined"]},
-      {name:"Margins", ms:["Maintenance margins established","Maintenance margin target set"]}
-    ]
-  }
+const GATES = ["Discovery","Align","Build","Validate","Live"];
+const STATUS = {
+  idle:  {label:"Idle",        cls:"idle",  dot:"var(--idle)"},
+  prog:  {label:"In progress", cls:"prog",  dot:"var(--prog)"},
+  block: {label:"Blocked",     cls:"block", dot:"var(--block)"},
+  done:  {label:"Done",        cls:"done",  dot:"var(--done)"}
 };
-const INIT_ORDER = ["revpar","takerate","journey","housekeeping","maintenance"];
+const STATUS_CYCLE = ["idle","prog","block","done"];
+const KEY = "stayd_gatedocs_v2";
 
-/* =========================== STATE =========================== */
-const KEY="stayd-gatedocs:v2";
-let STATE=load();
-function load(){ try{return JSON.parse(localStorage.getItem(KEY))||blank();}catch(e){return blank();} }
-function blank(){
-  const s={active:"rollup", ms:{}, custom:{}, notes:{}, open:{}};
-  // seed foundation for the two brands we know are on the stack
-  ["Beachside VR","Blue Gems"].forEach(b=>{
-    s.ms[b]={}; s.open[b]={}; s.notes[b]={}; s.custom[b]={};
-    // revpar G1: 0 Key Data, 1 Guesty, 2 Wheelhouse, 3 OTAmiser -> check 0,1,2
-    [0,1,2].forEach(mi=> s.ms[b][msKey("revpar",0,mi)]=true );
+const uid = () => Math.random().toString(36).slice(2,9);
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+/* ---------- seed ---------- */
+function seed(){
+  const mk=(title,owner,due,status,gate,ms,notes)=>({
+    id:uid(),title,owner,due,status,gate,open:false,notes:notes||"",
+    milestones:(ms||[]).map(m=>({id:uid(),text:m[0],done:m[1]}))
   });
-  return s;
-}
-function save(){ localStorage.setItem(KEY,JSON.stringify(STATE)); }
-function ensureBrand(b){ STATE.ms[b]=STATE.ms[b]||{}; STATE.custom[b]=STATE.custom[b]||{}; STATE.notes[b]=STATE.notes[b]||{}; STATE.open[b]=STATE.open[b]||{}; }
-function msKey(initId,gi,mi){ return `${initId}__g${gi}__m${mi}`; }
-
-const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
-const CARET='<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
-const XICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-
-/* =========================== PROGRESS =========================== */
-function customList(b,initId){ ensureBrand(b); return (STATE.custom[b][initId]||[]); }
-function initTotals(b,initId){
-  ensureBrand(b);
-  const init=INITIATIVES[initId]; let done=0,total=0;
-  init.gates.forEach((g,gi)=>g.ms.forEach((_,mi)=>{ total++; if(STATE.ms[b][msKey(initId,gi,mi)])done++; }));
-  customList(b,initId).forEach(c=>{ total++; if(c.done)done++; });
-  return {done,total,pct: total?Math.round(done/total*100):0};
-}
-function brandTotals(b){
-  let done=0,total=0,gates=0;
-  INIT_ORDER.forEach(id=>{
-    const init=INITIATIVES[id];
-    init.gates.forEach((g,gi)=>{ let gd=0; g.ms.forEach((_,mi)=>{total++;if(STATE.ms[b]&&STATE.ms[b][msKey(id,gi,mi)]){done++;gd++;}}); if(gd===g.ms.length&&g.ms.length)gates++; });
-    customList(b,id).forEach(c=>{total++;if(c.done)done++;});
-  });
-  return {done,total,gates,pct: total?Math.round(done/total*100):0};
-}
-function portfolioTotals(){
-  let done=0,total=0,gates=0;
-  BRANDS.forEach(b=>{const t=brandTotals(b);done+=t.done;total+=t.total;gates+=t.gates;});
-  return {done,total,gates,pct: total?Math.round(done/total*100):0};
-}
-
-/* =========================== TABS =========================== */
-const tabbar=document.getElementById('tabbar');
-function renderTabs(){
-  let html=`<button class="tab rollup ${STATE.active==='rollup'?'active':''}" data-tab="rollup">Roll-up</button>`;
-  BRANDS.forEach(b=>{
-    const p=brandTotals(b).pct;
-    html+=`<button class="tab ${STATE.active===b?'active':''}" data-tab="${b}">${b}<span class="tab-pct">${p}%</span></button>`;
-  });
-  tabbar.innerHTML=html;
-  tabbar.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{ setActive(t.dataset.tab); }));
-}
-function setActive(tab){ STATE.active=tab; save(); renderTabs(); renderMain();
-  const at=tabbar.querySelector('.tab.active'); if(at) at.scrollIntoView({inline:'center',block:'nearest'});
-  window.scrollTo({top:0,behavior:'smooth'});
+  return {
+    updated:Date.now(), activeTab:"rollup",
+    brands:[
+      {id:uid(),name:"RenJoy",owner:"Michael",notes:"",initiatives:[
+        mk("StaydOS platform — build vs. buy","Michael","Q3",  "prog", 1,
+          [["Score current PMS stack against StaydOS spec",true],["Vendor demos: buy path shortlist",true],["Cost model: build vs. buy 3-yr",false],["IC recommendation memo",false]],
+          "Leaning build for owner portal, buy for core PMS. Needs group gross-margin standard to finalize."),
+        mk("Conduit comms migration","Michael","Aug 15","block",2,
+          [["Map Conduit friction points",true],["Pilot replacement on 1 brand",false]],
+          "Blocked pending decision on unified comms owner across brands."),
+      ]},
+      {id:uid(),name:"Haven",owner:"Luke",notes:"",initiatives:[
+        mk("Owner relations playbook rollout","Luke","Jul 31","prog",2,
+          [["Draft owner onboarding SLA",true],["Quarterly owner review template",true],["Train GMs on cadence",false]],""),
+        mk("Owner comp & 2026 P&L structure","Luke","Q3","idle",0,
+          [["Benchmark owner comp across brands",false],["Model 2026 P&L scenarios",false]],""),
+      ]},
+      {id:uid(),name:"Host2Coast",owner:"—",notes:"",initiatives:[
+        mk("OTAmiser / Wheelhouse RM standard","—","Aug 1","prog",2,
+          [["Confirm Wheelhouse as group RM standard",true],["Migrate legacy pricing rules",false],["GM training on RM dashboards",false]],"")
+      ]},
+      {id:uid(),name:"Blue Gems",owner:"Blue Gems",notes:"",initiatives:[
+        mk("NetSuite accounting consolidation","Blue Gems","Q4","prog",1,
+          [["Chart of accounts standard across brands",true],["Migration plan: brand 1 pilot",true],["Cutover schedule",false],["Parallel-run validation",false]],
+          "Blue Gems leading group accounting consolidation into NetSuite."),
+      ]},
+      {id:uid(),name:"Beachside VR",owner:"Beachside",notes:"",initiatives:[
+        mk("Guest services & training standard","Beachside","Jul 20","done",4,
+          [["Guest services SOP pack",true],["Train-the-trainer sessions",true],["Adopt across pilot brands",true]],"Model for group guest-services ownership."),
+        mk("Cross-brand comms: what STAYD is","Beachside","Aug 30","idle",0,
+          [["Draft internal one-pager per brand team",false]],"")
+      ]},
+    ]
+  };
 }
 
-/* =========================== MAIN RENDER =========================== */
-const app=document.getElementById('app');
-const ctx=document.getElementById('ctx');
-function renderMain(){
-  if(STATE.active==='rollup'){ ctx.innerHTML='Viewing <b>Portfolio roll-up</b>'; renderRollup(); }
-  else { ctx.innerHTML='Editing <b>'+STATE.active+'</b>'; renderBrand(STATE.active); }
+/* ---------- persistence ---------- */
+let state = load();
+function load(){
+  try{ const raw=localStorage.getItem(KEY); if(raw) return JSON.parse(raw);}catch(e){}
+  return seed();
+}
+let saveTimer=null;
+function save(){
+  state.updated=Date.now();
+  setSaveState("Saving…");
+  try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){ setSaveState("Not saved (storage off)"); return; }
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>setSaveState("Saved"),450);
+}
+function setSaveState(t){ const el=$("#saveState"); if(el) el.textContent=t; }
+
+/* ---------- helpers ---------- */
+const brandById = id => state.brands.find(b=>b.id===id);
+function activeBrand(){ return state.activeTab==="rollup"?null:brandById(state.activeTab); }
+function initProgress(it){
+  if(!it.milestones.length) return it.status==="done"?100:0;
+  return Math.round(it.milestones.filter(m=>m.done).length / it.milestones.length * 100);
+}
+function brandProgress(b){
+  if(!b.initiatives.length) return 0;
+  return Math.round(b.initiatives.reduce((s,it)=>s+initProgress(it),0)/b.initiatives.length);
+}
+function dueDays(due){
+  if(!due) return null;
+  const d=parseDue(due); if(!d) return null;
+  return Math.round((d - new Date().setHours(0,0,0,0))/86400000);
+}
+function parseDue(str){
+  if(!str) return null;
+  str=str.trim();
+  let m=str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(m) return new Date(+m[1],+m[2]-1,+m[3]).getTime();
+  const months={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  m=str.match(/([a-z]{3,})\.?\s+(\d{1,2})/i);
+  if(m && months[m[1].slice(0,3).toLowerCase()]!==undefined){
+    const yr=new Date().getFullYear(); return new Date(yr,months[m[1].slice(0,3).toLowerCase()],+m[2]).getTime();
+  }
+  m=str.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?$/);
+  if(m){ let y=m[3]?(+m[3]<100?2000+ +m[3]:+m[3]):new Date().getFullYear(); return new Date(y,+m[1]-1,+m[2]).getTime(); }
+  return null; // quarters / "EOW" etc. render as text, no countdown
 }
 
-/* ---- BRAND VIEW ---- */
-function renderBrand(b){
-  ensureBrand(b);
-  const t=brandTotals(b);
-  app.innerHTML=`<div class="view-head">
-      <div><div class="view-title">${b}</div><div class="view-sub">Update this brand's gates and milestones here. The Roll-up tab reflects changes live.</div></div>
-      <div class="brand-meter">
-        <div class="bm-top"><span class="bm-label">Brand progress</span><span class="bm-pct">${t.pct}%</span></div>
-        <div class="bar"><div class="bar-fill" style="width:${t.pct}%"></div></div>
-        <div class="bm-foot"><b>${t.done}</b>/<b>${t.total}</b> milestones · <b>${t.gates}</b> gates cleared</div>
-      </div>
-    </div>`;
-  SEGMENTS.forEach(seg=>{
-    const s=document.createElement('section'); s.className='segment';
-    s.innerHTML=`<div class="seg-head"><span class="seg-tag ${seg.id==='mid'?'mid':''}">${seg.tag}</span><span class="seg-title">${seg.name}</span><span class="seg-window">${seg.window}</span></div>`;
-    seg.initIds.forEach(id=> s.appendChild(renderInit(b,id)) );
-    app.appendChild(s);
-  });
-}
-
-function renderInit(b,initId){
-  const init=INITIATIVES[initId];
-  const open=!!(STATE.open[b]&&STATE.open[b][initId]);
-  const el=document.createElement('article');
-  el.className='init'+(open?' open':''); el.dataset.init=initId;
-  const c=init.cadence;
-  el.innerHTML=`
-    <div class="init-head">
-      <div class="ih-left">
-        <div class="ih-titlerow"><span class="ih-title">${init.name}</span>
-          <span class="chip time">${init.timeframe}</span><span class="chip cadence">${c.rhythm} · ${c.length}</span></div>
-        <div class="ih-obj">${init.objective}</div>
-      </div>
-      <div class="ih-right"><div class="ih-pct" data-pct>0%<small>complete</small></div>${CARET}</div>
-    </div>
-    <div class="rail" data-rail></div>
-    <div class="init-body">
-      <div class="block"><div class="block-h">Meeting</div>
-        <details class="agenda"><summary><span>Standing agenda</span><span class="meta">${c.rhythm} · ${c.length}</span></summary>
-          <div class="cad-line"><span class="k">When</span> ${c.when} <span class="k">·</span> <span class="k">Owner</span> ${c.who}</div>
-          <ol>${init.agenda.map(a=>`<li>${a}</li>`).join('')}</ol></details></div>
-      <div class="block"><div class="block-h">Gates &amp; milestones</div><div data-gates></div></div>
-      <div class="block"><div class="block-h">Brand-specific milestones · levers</div><div data-custom></div></div>
-      <div class="block"><div class="block-h">Field notes</div>
-        <textarea class="notes" placeholder="Paste from Granola / transcripts, or record ${b}-specific detail, blockers, decisions…">${(STATE.notes[b]&&STATE.notes[b][initId])||''}</textarea></div>
-    </div>`;
-
-  // toggle
-  el.querySelector('.init-head').addEventListener('click',()=>{ el.classList.toggle('open'); STATE.open[b][initId]=el.classList.contains('open'); save(); });
-  // notes
-  el.querySelector('textarea.notes').addEventListener('input',e=>{ STATE.notes[b][initId]=e.target.value; save(); });
-
-  // gates
-  const gh=el.querySelector('[data-gates]');
-  init.gates.forEach((g,gi)=>gh.appendChild(renderGate(b,initId,g,gi)));
-  // custom
-  el.querySelector('[data-custom]').appendChild(renderCustom(b,initId));
-
-  setTimeout(()=>refreshInit(b,initId),0);
-  return el;
-}
-
-function renderGate(b,initId,g,gi){
-  const wrap=document.createElement('div'); wrap.className='gate'; wrap.dataset.gate=gi;
-  const items=g.ms.map((label,mi)=>{
-    const k=msKey(initId,gi,mi); const done=STATE.ms[b][k]?' done':'';
-    return `<li class="${done}" data-k="${k}"><span class="ck">${CHECK}</span><span class="ms-label">${label}</span></li>`;
-  }).join('');
-  wrap.innerHTML=`<div class="gate-h"><span class="gate-code">G${gi+1}</span><span class="gate-name">${g.name}</span><span class="gate-count" data-gc></span></div><ul class="ms">${items}</ul>`;
-  wrap.querySelectorAll('.ms li').forEach(li=>li.addEventListener('click',()=>{
-    const k=li.dataset.k; if(STATE.ms[b][k])delete STATE.ms[b][k]; else STATE.ms[b][k]=true; refreshInit(b,initId); save();
-  }));
-  return wrap;
-}
-
-function renderCustom(b,initId){
-  const wrap=document.createElement('div'); wrap.className='gate custom';
-  const list=customList(b,initId);
-  const items=list.map(c=>`<li class="custom ${c.done?'done':''}" data-cid="${c.id}"><span class="ck">${CHECK}</span><span class="ms-label">${c.label}</span><span class="del" data-del="${c.id}">${XICON}</span></li>`).join('');
-  wrap.innerHTML=`<div class="gate-h"><span class="gate-code">+</span><span class="gate-name">Brand-specific</span><span class="gate-count" data-gcc></span></div>
-    <ul class="ms">${items||''}</ul>
-    <div class="add-ms"><input type="text" placeholder="Add a ${b}-specific milestone or lever…"><button>Add</button></div>`;
-  // toggle custom
-  wrap.querySelectorAll('.ms li').forEach(li=>li.addEventListener('click',e=>{
-    if(e.target.closest('.del')) return;
-    const cid=li.dataset.cid; const it=customList(b,initId).find(x=>x.id===cid); if(it){it.done=!it.done; refreshInit(b,initId); save();}
-  }));
-  wrap.querySelectorAll('[data-del]').forEach(d=>d.addEventListener('click',e=>{
-    e.stopPropagation(); const cid=d.dataset.del; STATE.custom[b][initId]=customList(b,initId).filter(x=>x.id!==cid);
-    renderBrandInitInPlace(b,initId); save();
-  }));
-  const inp=wrap.querySelector('input'), btn=wrap.querySelector('button');
-  const add=()=>{ const v=inp.value.trim(); if(!v)return; ensureBrand(b); STATE.custom[b][initId]=customList(b,initId); STATE.custom[b][initId].push({id:'c_'+Date.now()+'_'+Math.floor(Math.random()*999),label:v,done:false}); inp.value=''; renderBrandInitInPlace(b,initId); save(); };
-  btn.addEventListener('click',add); inp.addEventListener('keydown',e=>{if(e.key==='Enter')add();});
-  return wrap;
-}
-
-/* re-render a single initiative card in place (after custom add/delete) */
-function renderBrandInitInPlace(b,initId){
-  const old=[...app.querySelectorAll('.init')].find(el=>el.dataset.init===initId && STATE.active===b);
-  if(!old) return;
-  const fresh=renderInit(b,initId);
-  fresh.classList.add('open'); STATE.open[b][initId]=true;
-  old.replaceWith(fresh);
-}
-
-function refreshInit(b,initId){
-  const el=[...app.querySelectorAll('.init')].find(x=>x.dataset.init===initId);
-  if(!el) return;
-  const init=INITIATIVES[initId];
-  init.gates.forEach((g,gi)=>{
-    let gd=0;
-    g.ms.forEach((_,mi)=>{ const k=msKey(initId,gi,mi); const on=!!STATE.ms[b][k]; const li=el.querySelector(`.ms li[data-k="${k}"]`); if(li)li.classList.toggle('done',on); if(on)gd++; });
-    const gEl=el.querySelector(`.gate[data-gate="${gi}"]`); const cleared=gd===g.ms.length&&g.ms.length; 
-    if(gEl){ gEl.classList.toggle('done',cleared); gEl.classList.toggle('active',gd>0&&!cleared); gEl.querySelector('[data-gc]').textContent=`${gd}/${g.ms.length}`; }
-  });
-  // custom count
-  const cl=customList(b,initId); const cd=cl.filter(c=>c.done).length;
-  const cc=el.querySelector('[data-gcc]'); if(cc)cc.textContent=cl.length?`${cd}/${cl.length}`:'';
-  // rail (template gates only)
-  const rail=el.querySelector('[data-rail]');
-  rail.innerHTML=init.gates.map((g,gi)=>{
-    let gd=0; g.ms.forEach((_,mi)=>{if(STATE.ms[b][msKey(initId,gi,mi)])gd++;});
-    const pct=g.ms.length?Math.round(gd/g.ms.length*100):0; const cleared=pct===100;
-    return `<div class="rail-seg ${cleared?'done':(gd>0?'active':'')}"><div class="rail-track"><div class="rail-fill" style="width:${pct}%"></div></div>
-      <div class="rail-lab"><span class="rail-code"><span class="dot"></span>G${gi+1}</span><span class="rail-nm">${g.name}</span></div></div>`;
-  }).join('');
-  const st=initTotals(b,initId);
-  const pe=el.querySelector('[data-pct]'); if(pe)pe.innerHTML=`${st.pct}%<small>complete</small>`;
-  // keep tab %s fresh
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
   renderTabs();
+  const v=$("#view");
+  v.innerHTML = state.activeTab==="rollup" ? rollupHTML() : brandHTML(activeBrand());
+  renderFoot();
 }
 
-/* ---- ROLLUP VIEW ---- */
-function heatColor(pct){ return `color-mix(in srgb, var(--teal) ${pct}%, var(--card-2))`; }
-function renderRollup(){
-  const p=portfolioTotals();
-  app.innerHTML=`<div class="view-head"><div>
-      <div class="view-title">Portfolio Roll-up</div>
-      <div class="view-sub">Live aggregate across all ${BRANDS.length} brands. Click any brand or cell to jump into it.</div></div></div>
-    <div class="rollup-grid">
-      <div class="panel">
-        <div class="panel-h">Portfolio progress</div>
-        <div class="port-top"><div class="port-pct">${p.pct}%</div>
-          <div class="port-stats"><b>${p.done}</b> of <b>${p.total}</b> milestones complete<br><b>${p.gates}</b> gates cleared across the portfolio</div></div>
-        <div class="bar"><div class="bar-fill" style="width:${p.pct}%"></div></div>
+function renderTabs(){
+  const t=$("#tabs");
+  let h=`<button class="tab rollup ${state.activeTab==='rollup'?'active':''}" data-tab="rollup">Roll-up</button>`;
+  state.brands.forEach(b=>{
+    h+=`<button class="tab ${state.activeTab===b.id?'active':''}" data-tab="${b.id}">
+          ${esc(b.name)}<span class="pip">${b.initiatives.length}</span>
+        </button>`;
+  });
+  h+=`<button class="tab add" id="addBrand">+ Brand</button>`;
+  t.innerHTML=h;
+}
+
+/* ---------------- ROLL-UP ---------------- */
+function rollupHTML(){
+  const all=[]; state.brands.forEach(b=>b.initiatives.forEach(it=>all.push({b,it})));
+  const total=all.length;
+  const msTotal=all.reduce((s,x)=>s+x.it.milestones.length,0);
+  const msDone=all.reduce((s,x)=>s+x.it.milestones.filter(m=>m.done).length,0);
+  const pct=msTotal?Math.round(msDone/msTotal*100):0;
+  const blocked=all.filter(x=>x.it.status==="block").length;
+  const dueSoon=all.filter(x=>{const d=dueDays(x.it.due);return d!==null&&d>=0&&d<=7&&x.it.status!=="done";}).length;
+
+  // KPIs
+  let h=`<div class="kpis">
+    <div class="kpi"><div class="label">Initiatives</div><div class="val">${total}</div></div>
+    <div class="kpi"><div class="label">Milestones complete</div><div class="val">${pct}<small>%</small></div></div>
+    <div class="kpi ${blocked?'alert':''}"><div class="label">Blocked</div><div class="val">${blocked}</div></div>
+    <div class="kpi ${dueSoon?'alert':''}"><div class="label">Due ≤ 7 days</div><div class="val">${dueSoon}</div></div>
+  </div>`;
+
+  // Heatmap: brands × gates
+  h+=`<div class="panel"><div class="panel-h"><h2>Portfolio gate map</h2>
+        <span class="save-dot" style="margin:0"><span style="font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3)">count of initiatives · color = worst live status</span></span>
+      </div><div class="panel-b" style="overflow-x:auto">`;
+  h+=`<table class="heat"><thead><tr><th class="brandcol">Brand</th>`;
+  GATES.forEach((g,i)=>h+=`<th>G${i} · ${esc(g)}</th>`);
+  h+=`<th class="totcol">Σ</th></tr></thead><tbody>`;
+  state.brands.forEach(b=>{
+    h+=`<tr><td class="brandcell">${esc(b.name)}<span class="owner">${esc(b.owner||'—')}</span></td>`;
+    GATES.forEach((g,gi)=>{
+      const inG=b.initiatives.filter(it=>it.gate===gi);
+      if(!inG.length){ h+=`<td><div class="cell empty"><span class="n">·</span></div></td>`; return; }
+      const worst = inG.some(i=>i.status==="block")?"block":inG.some(i=>i.status==="idle")?"idle":inG.some(i=>i.status==="prog")?"prog":"done";
+      const bg={block:"var(--block-bg)",idle:"var(--idle-bg)",prog:"var(--prog-bg)",done:"var(--done-bg)"}[worst];
+      const fg={block:"var(--block)",idle:"var(--ink-2)",prog:"var(--prog)",done:"var(--done)"}[worst];
+      let dots=inG.slice(0,5).map(i=>`<i style="background:${STATUS[i.status].dot}"></i>`).join("");
+      h+=`<td><div class="cell has" style="background:${bg};border-color:transparent">
+            <span class="n" style="color:${fg}">${inG.length}</span>
+            <span class="mini">${dots}</span></div></td>`;
+    });
+    h+=`<td class="totcol">${b.initiatives.length}</td></tr>`;
+  });
+  h+=`</tbody><tfoot><tr><td class="brandcell">Totals</td>`;
+  GATES.forEach((g,gi)=>{ const c=all.filter(x=>x.it.gate===gi).length; h+=`<td>${c||'·'}</td>`; });
+  h+=`<td class="totcol">${total}</td></tr></tfoot></table>`;
+  h+=`<div class="legend">
+        <span><i style="background:var(--done)"></i>Done</span>
+        <span><i style="background:var(--prog)"></i>In progress</span>
+        <span><i style="background:var(--block)"></i>Blocked</span>
+        <span><i style="background:var(--idle)"></i>Idle</span>
+      </div>`;
+  h+=`</div></div>`;
+
+  // Attention list
+  const attn=all.filter(x=>{
+    const d=dueDays(x.it.due);
+    return x.it.status==="block" || (d!==null && d<=7 && x.it.status!=="done");
+  }).sort((a,c)=>{
+    const ra=a.it.status==="block"?-1000:(dueDays(a.it.due)??999);
+    const rc=c.it.status==="block"?-1000:(dueDays(c.it.due)??999);
+    return ra-rc;
+  });
+  h+=`<div class="panel"><div class="panel-h"><h2>Needs attention</h2></div><div class="panel-b"><div class="attn">`;
+  if(!attn.length){
+    h+=`<div class="empty-note">Nothing blocked and nothing due within a week. Portfolio is clear.</div>`;
+  } else {
+    attn.forEach(({b,it})=>{
+      const d=dueDays(it.due);
+      const flag = it.status==="block"?"var(--block)":(d!==null&&d<0?"var(--block)":"var(--prog)");
+      let reason = it.status==="block" ? "Blocked"
+                 : d!==null&&d<0 ? `Overdue ${Math.abs(d)}d`
+                 : d===0 ? "Due today"
+                 : d!==null ? `Due in ${d}d` : "Due soon";
+      h+=`<div class="attn-row">
+            <div class="flag" style="background:${flag}"></div>
+            <div class="meta">
+              <div class="t">${esc(it.title)}</div>
+              <div class="sub"><b>${esc(b.name)}</b> · G${it.gate} ${esc(GATES[it.gate])} · ${esc(it.owner||'unassigned')} · ${reason}</div>
+            </div>
+            <div class="go"><button class="btn sm" data-open-init data-brand="${b.id}" data-init="${it.id}">Open →</button></div>
+          </div>`;
+    });
+  }
+  h+=`</div></div></div>`;
+  return h;
+}
+
+/* ---------------- BRAND ---------------- */
+function brandHTML(b){
+  if(!b) return "";
+  const prog=brandProgress(b);
+  const counts={idle:0,prog:0,block:0,done:0}; b.initiatives.forEach(it=>counts[it.status]++);
+
+  let h=`<div class="brandhead">
+    <div class="titleblock">
+      <h2 class="bname" contenteditable data-edit="brandName" data-brand="${b.id}">${esc(b.name)}</h2>
+      <div class="ownerline"><span class="k">Function owner</span><span contenteditable data-edit="brandOwner" data-brand="${b.id}" data-ph="add owner">${esc(b.owner||'')}</span></div>
+      <div class="stat-split">
+        <span><i style="background:var(--done)"></i>${counts.done} done</span>
+        <span><i style="background:var(--prog)"></i>${counts.prog} active</span>
+        <span><i style="background:var(--block)"></i>${counts.block} blocked</span>
+        <span><i style="background:var(--idle)"></i>${counts.idle} idle</span>
       </div>
-      <div class="panel"><div class="panel-h">Progress by brand × initiative</div><div class="hm-wrap" id="hm"></div></div>
-      <div class="panel"><div class="panel-h">Foundation status (RevPAR access)</div><div class="hm-wrap" id="found"></div></div>
+    </div>
+    <div class="progwrap">
+      <div class="ptop"><span>BRAND PROGRESS</span><b>${prog}%</b></div>
+      <div class="bar"><i style="width:${prog}%"></i></div>
+    </div>
+  </div>`;
+
+  // Granola intake
+  h+=intakeHTML(b);
+
+  // Initiatives
+  if(!b.initiatives.length){
+    h+=`<div class="flat-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+      <p>No initiatives yet. Paste Granola notes above, or add one manually.</p>
     </div>`;
-  buildHeatmap(); buildFoundation();
+  } else {
+    b.initiatives.forEach(it=>h+=initHTML(b,it));
+  }
+  h+=`<div class="addbtn-row"><button class="btn" data-add-init="${b.id}">+ Add initiative</button></div>`;
+  return h;
 }
 
-function buildHeatmap(){
-  let head=`<tr><th style="text-align:left;padding-left:12px">Brand</th>${INIT_ORDER.map(id=>`<th>${INIT_SHORT[id]}</th>`).join('')}<th>Brand</th></tr>`;
-  let rows=BRANDS.map(b=>{
-    const cells=INIT_ORDER.map(id=>{ const pct=initTotals(b,id).pct; const tc=pct>=55?'#fff':'var(--ink-soft)';
-      return `<td><div class="hm-cell" data-b="${b}" style="background:${heatColor(pct)};color:${tc}">${pct}</div></td>`; }).join('');
-    const bp=brandTotals(b).pct;
-    return `<tr><th data-b="${b}">${b}</th>${cells}<td class="hm-brandpct">${bp}%</td></tr>`;
-  }).join('');
-  const el=document.getElementById('hm');
-  el.innerHTML=`<table class="hm"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
-  el.querySelectorAll('[data-b]').forEach(x=>x.addEventListener('click',()=>setActive(x.dataset.b)));
+function intakeHTML(b){
+  const opts = b.initiatives.map(it=>`<option value="${it.id}">↳ ${esc(it.title)}</option>`).join("");
+  return `<div class="intake" data-brand="${b.id}">
+    <div class="intake-h">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></div>
+      <div>
+        <h3>Granola intake</h3>
+        <p>Paste raw call notes — action lines become milestones with owner, due date, and status pre-guessed.</p>
+      </div>
+    </div>
+    <div class="intake-b">
+      <textarea class="paste" data-paste placeholder="Paste Granola notes here…
+
+e.g.
+- Michael to finalize StaydOS cost model by Aug 15
+- Blocked: NetSuite cutover waiting on Blue Gems sign-off
+- [x] Guest services SOP pack shipped
+- Luke: draft owner SLA next week"></textarea>
+      <div class="intake-actions">
+        <button class="btn primary sm" data-parse>Extract milestones</button>
+        <button class="btn ghost sm" data-clearpaste>Clear</button>
+        <span class="hint" data-hint></span>
+      </div>
+      <div class="candidates" data-cands>
+        <div class="cand-top">
+          <div class="route">Add selected to
+            <select class="sel" data-route>
+              <option value="__new__">＋ new initiatives</option>
+              ${opts}
+            </select>
+          </div>
+          <button class="btn sm" data-toggleall>Select all</button>
+        </div>
+        <div data-candlist></div>
+        <div class="addbtn-row"><button class="btn primary sm" data-commit>Add selected →</button></div>
+      </div>
+    </div>
+  </div>`;
 }
 
-function buildFoundation(){
-  const cols=["Key Data","Guesty","Wheelhouse","OTAmiser"]; // revpar G1 order
-  let head=`<tr><th>Brand</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;
-  let rows=BRANDS.map(b=>{
-    ensureBrand(b);
-    const cells=cols.map((_,mi)=>{ const on=!!STATE.ms[b][msKey("revpar",0,mi)];
-      return `<td><div class="fdot ${on?'on':''}">${CHECK}</div></td>`; }).join('');
-    return `<tr><th data-b="${b}">${b}</th>${cells}</tr>`;
-  }).join('');
-  const el=document.getElementById('found');
-  el.innerHTML=`<table class="found"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
-  el.querySelectorAll('[data-b]').forEach(x=>x.addEventListener('click',()=>setActive(x.dataset.b)));
+function initHTML(b,it){
+  const st=STATUS[it.status], prog=initProgress(it), d=dueDays(it.due);
+  const dueCls = (d!==null && d<=3 && it.status!=="done") ? "due-soon":"";
+  // gate rail
+  let rail=`<div class="rail">`;
+  GATES.forEach((g,gi)=>{
+    const cls = gi<it.gate?"done":gi===it.gate?"current":"";
+    rail+=`<div class="g ${cls}">
+      <div class="pip" data-gate="${gi}" data-init="${it.id}" data-brand="${b.id}" title="Move to ${g}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span class="glabel">G${gi} ${esc(g)}</span></div>`;
+    if(gi<GATES.length-1) rail+=`<div class="conn ${gi<it.gate?'filled':''}"></div>`;
+  });
+  rail+=`</div>`;
+
+  let ms=it.milestones.map(m=>`
+    <div class="ms ${m.done?'done':''}" data-ms="${m.id}">
+      <div class="box" data-toggle-ms data-init="${it.id}" data-brand="${b.id}" data-ms="${m.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="txt" contenteditable data-edit="ms" data-init="${it.id}" data-brand="${b.id}" data-ms="${m.id}">${esc(m.text)}</div>
+      <button class="rm" data-rm-ms data-init="${it.id}" data-brand="${b.id}" data-ms="${m.id}" title="Remove">×</button>
+    </div>`).join("");
+
+  return `<div class="init ${it.open?'open':''} ${it.status==='block'?'blocked':''}" data-initrow="${it.id}">
+    <div class="init-h">
+      <button class="disc" data-disc data-init="${it.id}" data-brand="${b.id}" aria-label="Expand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="init-main">
+        <div class="init-title" contenteditable data-edit="title" data-init="${it.id}" data-brand="${b.id}">${esc(it.title)}</div>
+        <div class="init-sub">
+          <span class="chip ${st.cls}" data-status data-init="${it.id}" data-brand="${b.id}" title="Click to cycle status"><i></i>${st.label}</span>
+          <span class="field"><span class="k">Owner</span><span contenteditable data-edit="owner" data-init="${it.id}" data-brand="${b.id}" data-ph="—">${esc(it.owner||'')}</span></span>
+          <span class="field"><span class="k">Due</span><span class="${dueCls}" contenteditable data-edit="due" data-init="${it.id}" data-brand="${b.id}" data-ph="—">${esc(it.due||'')}</span></span>
+          <span class="field"><span class="k">Milestones</span>${it.milestones.filter(m=>m.done).length}/${it.milestones.length} · ${prog}%</span>
+        </div>
+      </div>
+    </div>
+    <div class="railwrap" style="padding:0 16px 4px">${rail}</div>
+    <div class="init-b">
+      <div class="cols">
+        <div>
+          <p class="sub-h">Milestones</p>
+          ${ms||'<div class="empty-note">No milestones yet.</div>'}
+          <button class="add-ms" data-add-ms data-init="${it.id}" data-brand="${b.id}">+ milestone</button>
+        </div>
+        <div>
+          <p class="sub-h">Field notes</p>
+          <textarea class="notes-area" data-edit="initNotes" data-init="${it.id}" data-brand="${b.id}" placeholder="Context, decisions, links from the call…">${esc(it.notes||'')}</textarea>
+        </div>
+      </div>
+      <div class="rmrow"><button class="btn danger sm" data-rm-init data-init="${it.id}" data-brand="${b.id}">Delete initiative</button></div>
+    </div>
+  </div>`;
 }
 
-/* =========================== TOOLBAR =========================== */
-document.getElementById('expandAll').addEventListener('click',()=>{ if(STATE.active==='rollup')return;
-  app.querySelectorAll('.init').forEach(el=>{el.classList.add('open'); STATE.open[STATE.active][el.dataset.init]=true;}); save(); });
-document.getElementById('collapseAll').addEventListener('click',()=>{ if(STATE.active==='rollup')return;
-  app.querySelectorAll('.init').forEach(el=>{el.classList.remove('open'); STATE.open[STATE.active][el.dataset.init]=false;}); save(); });
+function renderFoot(){
+  const d=new Date(state.updated);
+  const stamp=d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+  $("#foot").innerHTML=`STAYD_Gate_Documents.html · self-contained · saves in this browser · last change ${stamp}<br>Host on GitHub Pages beside the Pacing &amp; Cadence dashboards. Use Export brand to hand one brand's state to that brand's team, then Import their update.`;
+}
 
-function download(obj,name){ const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
-document.getElementById('exportAll').addEventListener('click',()=>download(STATE,`stayd-gatedocs-ALL-${new Date().toISOString().slice(0,10)}.json`));
-document.getElementById('exportBrand').addEventListener('click',()=>{
-  if(STATE.active==='rollup'){ alert('Open a brand tab first to export just that brand.'); return; }
-  const b=STATE.active; ensureBrand(b);
-  const slice={_brand:b, ms:STATE.ms[b], custom:STATE.custom[b], notes:STATE.notes[b], open:STATE.open[b]};
-  download(slice,`stayd-gatedocs-${b.replace(/\s+/g,'_')}-${new Date().toISOString().slice(0,10)}.json`);
-});
-document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
-document.getElementById('importFile').addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{ try{
-    const inc=JSON.parse(r.result);
-    if(inc._brand){ // single-brand slice
-      const b=inc._brand; ensureBrand(b);
-      STATE.ms[b]=inc.ms||{}; STATE.custom[b]=inc.custom||{}; STATE.notes[b]=inc.notes||{}; STATE.open[b]=inc.open||{};
-      save(); setActive(b);
-    } else { // full state
-      STATE=Object.assign(blank(),inc); STATE.ms=inc.ms||{}; STATE.custom=inc.custom||{}; STATE.notes=inc.notes||{}; STATE.open=inc.open||{};
-      save(); renderTabs(); renderMain();
+/* ============================================================
+   GRANOLA PARSER  (offline heuristics)
+   ============================================================ */
+function parseGranola(text){
+  const monthRe=/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?\b/i;
+  const isoRe=/\b\d{4}-\d{1,2}-\d{1,2}\b/;
+  const slashRe=/\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/;
+  const weekdayRe=/\bby\s+(mon|tue|wed|thu|fri|sat|sun)[a-z]*\b/i;
+  const relRe=/\b(next week|this week|end of (?:week|month)|eo[wmd]|q[1-4])\b/i;
+  const owns=/\b(will|to|owns?|leads?|handle[sd]?|drafts?|sends?|builds?|ships?|reviews?|schedules?|sets? up|finali[sz]e[sd]?|migrat\w+|launch\w*)\b/i;
+  const STOP=/^(blocked|action|todo|next|done|waiting|pending|update|recap|agenda|note|notes|status|owner|the|this|that|we|they|it|discovery|align|build|validate|live)$/i;
+  const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+  const out=[];
+  text.split(/\r?\n/).forEach(raw=>{
+    const line=raw.trim();
+    if(!line) return;
+
+    const bullet=/^([-*•▪·o]|\[[ xX]?\]|\d+[.)])\s+/.test(line);
+    const looksAction = bullet || owns.test(line) || /^(action|todo|next|follow[-\s]?up|blocked)\b/i.test(line);
+    if(!looksAction) return;
+
+    // strip bullet / checkbox markers (may be nested, e.g. "- [x] ...")
+    let t=line, g=0;
+    while(g++<4){ const nt=t.replace(/^([-*•▪·o]|\[[ xX]?\]|\d+[.)])\s+/,""); if(nt===t) break; t=nt; }
+    const checked=/^(?:[-*•▪·o]\s+)*\[[xX]\]/.test(line);
+    // strip a leading section word ("Blocked:", "Action -", ...)
+    t=t.replace(/^(action|todo|next|follow[-\s]?up|blocked|done|waiting|update|recap|agenda|note)s?\s*[:\-]\s*/i,"").trim();
+
+    // status
+    let status="idle";
+    if(checked || /\b(done|shipped|completed|closed|live|delivered)\b/i.test(t)) status="done";
+    else if(/\b(blocked|stuck|waiting on|pending|on hold|held up)\b/i.test(line)) status="block";
+    else if(/\b(in progress|underway|started|wip|ongoing|drafting|building)\b/i.test(t)) status="prog";
+    else if(owns.test(t)) status="prog";
+
+    // due — keep both the raw match (for stripping) and a tidy display value
+    let due="",dueRaw="",mm;
+    if((mm=t.match(isoRe))){ dueRaw=mm[0]; due=mm[0]; }
+    else if((mm=t.match(monthRe))){ dueRaw=mm[0]; due=mm[0].replace(/(st|nd|rd|th)/i,""); }
+    else if((mm=t.match(slashRe))){ dueRaw=mm[0]; due=mm[0]; }
+    else if((mm=t.match(weekdayRe))){ dueRaw=mm[0]; due=mm[0].replace(/^by\s+/i,"by "); }
+    else if((mm=t.match(relRe))){ dueRaw=mm[0]; due=/^q[1-4]$/i.test(mm[0])?mm[0].toUpperCase():mm[0]; }
+
+    // owner — "@Name", "Name:", "Name will/to ..." (skip section words)
+    let owner="",om;
+    if((om=t.match(/@([A-Za-z][A-Za-z]+)/)) && !STOP.test(om[1])) owner=om[1];
+    else if((om=t.match(/^([A-Z][a-zA-Z]+)\s*[:\-]\s+/)) && !STOP.test(om[1])) owner=om[1];
+    else if((om=t.match(/^([A-Z][a-zA-Z]+)\s+(?:will|to|owns?|leads?|handles?|drafts?|sends?|builds?|ships?|reviews?|schedules?|sets? up|finali[sz]es?|migrat\w+|launch\w*)\b/)) && !STOP.test(om[1])) owner=om[1];
+
+    // title cleanup
+    let title=t;
+    if(owner){
+      title=title.replace(new RegExp("^@?"+reEsc(owner)+"\\b\\s*[:\\-]?\\s*(?:to|will|’ll|'ll|should|shall|must|can|would|owns?|leads?|handles?)?\\s*","i"),"").trim();
     }
-  }catch(err){ alert('That file could not be read as a gate-documents export.'); } };
-  r.readAsText(f); e.target.value='';
+    if(dueRaw){
+      title=title.replace(new RegExp("\\s*(?:by|due|on|for|before)?\\s*"+reEsc(dueRaw)+"\\b","i")," ").trim();
+    }
+    title=title.replace(/\s{2,}/g," ").replace(/[\s,;:–-]+$/,"").trim();
+    if(!title) title=t;
+    title=title.charAt(0).toUpperCase()+title.slice(1);
+
+    out.push({id:uid(),title,owner,due,status,on:true});
+  });
+  return out;
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+const view=$("#view");
+const tabs=$("#tabs");
+
+// tab switching + add brand
+tabs.addEventListener("click",e=>{
+  const add=e.target.closest("#addBrand");
+  if(add){
+    const nb={id:uid(),name:"New brand",owner:"",notes:"",initiatives:[]};
+    state.brands.push(nb); state.activeTab=nb.id; save(); render(); toast("Brand added"); return;
+  }
+  const tab=e.target.closest(".tab[data-tab]");
+  if(tab){ state.activeTab=tab.dataset.tab; save(); render(); }
 });
 
-/* =========================== INIT =========================== */
-BRANDS.forEach(ensureBrand);
-renderTabs(); renderMain();
+// delegated clicks in view
+view.addEventListener("click",e=>{
+  const t=e.target;
+
+  // open initiative from rollup
+  const openBtn=t.closest("[data-open-init]");
+  if(openBtn){
+    state.activeTab=openBtn.dataset.brand;
+    const b=brandById(openBtn.dataset.brand);
+    const it=b&&b.initiatives.find(i=>i.id===openBtn.dataset.init);
+    if(it) it.open=true;
+    save(); render();
+    setTimeout(()=>{const el=view.querySelector(`[data-initrow="${openBtn.dataset.init}"]`); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});},60);
+    return;
+  }
+
+  // disclosure
+  const disc=t.closest("[data-disc]");
+  if(disc){ const it=findInit(disc.dataset.brand,disc.dataset.init); if(it){it.open=!it.open; save(); render();} return; }
+
+  // status cycle
+  const stChip=t.closest("[data-status]");
+  if(stChip){
+    const it=findInit(stChip.dataset.brand,stChip.dataset.init);
+    if(it){ const i=STATUS_CYCLE.indexOf(it.status); it.status=STATUS_CYCLE[(i+1)%STATUS_CYCLE.length]; if(it.status==="done") it.gate=GATES.length-1; save(); render(); }
+    return;
+  }
+
+  // gate pip
+  const pip=t.closest("[data-gate]");
+  if(pip){ const it=findInit(pip.dataset.brand,pip.dataset.init); if(it){ it.gate=+pip.dataset.gate; save(); render(); } return; }
+
+  // toggle milestone
+  const box=t.closest("[data-toggle-ms]");
+  if(box){ const it=findInit(box.dataset.brand,box.dataset.init); const m=it&&it.milestones.find(x=>x.id===box.dataset.ms); if(m){m.done=!m.done; save(); render();} return; }
+
+  // remove milestone
+  const rmms=t.closest("[data-rm-ms]");
+  if(rmms){ const it=findInit(rmms.dataset.brand,rmms.dataset.init); if(it){it.milestones=it.milestones.filter(x=>x.id!==rmms.dataset.ms); save(); render();} return; }
+
+  // add milestone
+  const addms=t.closest("[data-add-ms]");
+  if(addms){ const it=findInit(addms.dataset.brand,addms.dataset.init); if(it){it.milestones.push({id:uid(),text:"New milestone",done:false}); it.open=true; save(); render();
+    setTimeout(()=>{const rows=view.querySelectorAll(`[data-initrow="${it.id}"] .ms .txt`); const last=rows[rows.length-1]; if(last){last.focus(); document.getSelection().selectAllChildren(last);} },40);} return; }
+
+  // add initiative
+  const addInit=t.closest("[data-add-init]");
+  if(addInit){ const b=brandById(addInit.dataset.addInit); if(b){ b.initiatives.push({id:uid(),title:"New initiative",owner:"",due:"",status:"idle",gate:0,open:true,notes:"",milestones:[]}); save(); render(); } return; }
+
+  // remove initiative
+  const rmInit=t.closest("[data-rm-init]");
+  if(rmInit){ const b=brandById(rmInit.dataset.brand); if(b){ b.initiatives=b.initiatives.filter(x=>x.id!==rmInit.dataset.init); save(); render(); toast("Initiative deleted"); } return; }
+
+  // ---- intake ----
+  const parseBtn=t.closest("[data-parse]"); if(parseBtn){ runParse(parseBtn); return; }
+  const clearBtn=t.closest("[data-clearpaste]"); if(clearBtn){ const box=clearBtn.closest(".intake-b").querySelector("[data-paste]"); box.value=""; box.closest(".intake-b").querySelector("[data-cands]").classList.remove("show"); box.closest(".intake-b").querySelector("[data-hint]").textContent=""; return; }
+  const candBox=t.closest(".cand[data-cand]"); if(candBox && !t.closest("[contenteditable]")){ candBox.classList.toggle("on"); return; }
+  const toggleAll=t.closest("[data-toggleall]"); if(toggleAll){ const list=toggleAll.closest(".candidates").querySelectorAll(".cand"); const anyOff=[...list].some(c=>!c.classList.contains("on")); list.forEach(c=>c.classList.toggle("on",anyOff)); toggleAll.textContent=anyOff?"Clear all":"Select all"; return; }
+  const commit=t.closest("[data-commit]"); if(commit){ commitCands(commit); return; }
+});
+
+// contenteditable + textarea edits
+view.addEventListener("input",e=>{
+  const el=e.target;
+  const notes=el.closest("[data-edit='initNotes']");
+  if(notes){ const it=findInit(notes.dataset.brand,notes.dataset.init); if(it){it.notes=el.value; save();} return; }
+});
+view.addEventListener("blur",e=>{
+  const el=e.target.closest("[contenteditable]");
+  if(!el) return;
+  const kind=el.dataset.edit, val=el.textContent.trim();
+  if(kind==="brandName"){ const b=brandById(el.dataset.brand); if(b){b.name=val||"Untitled"; save(); renderTabs();} }
+  else if(kind==="brandOwner"){ const b=brandById(el.dataset.brand); if(b){b.owner=val; save();} }
+  else if(kind==="title"){ const it=findInit(el.dataset.brand,el.dataset.init); if(it){it.title=val||"Untitled"; save();} }
+  else if(kind==="owner"){ const it=findInit(el.dataset.brand,el.dataset.init); if(it){it.owner=val; save();} }
+  else if(kind==="due"){ const it=findInit(el.dataset.brand,el.dataset.init); if(it){it.due=val; save(); render();} }
+  else if(kind==="ms"){ const it=findInit(el.dataset.brand,el.dataset.init); const m=it&&it.milestones.find(x=>x.id===el.dataset.ms); if(m){m.text=val; save();} }
+},true);
+// enter to blur on single-line editables
+view.addEventListener("keydown",e=>{
+  const el=e.target.closest("[contenteditable]");
+  if(el && e.key==="Enter" && el.dataset.edit!=="initNotes"){ e.preventDefault(); el.blur(); }
+});
+
+function findInit(brandId,initId){ const b=brandById(brandId); return b&&b.initiatives.find(i=>i.id===initId); }
+
+/* ---- parse flow ---- */
+let parseCache={};
+function runParse(btn){
+  const intake=btn.closest(".intake"), brandId=intake.dataset.brand;
+  const txt=intake.querySelector("[data-paste]").value;
+  const cands=parseGranola(txt);
+  const hint=intake.querySelector("[data-hint]");
+  const wrap=intake.querySelector("[data-cands]");
+  const list=intake.querySelector("[data-candlist]");
+  if(!cands.length){ hint.textContent="No action lines found — try bullet points or lines like “Name to do X by date.”"; wrap.classList.remove("show"); return; }
+  parseCache[brandId]=cands;
+  hint.textContent=`${cands.length} candidate${cands.length>1?'s':''} found — untick anything you don't want.`;
+  list.innerHTML=cands.map(c=>{
+    const stcls={done:"st-done",prog:"st-prog",block:"st-block",idle:""}[c.status];
+    const stlabel=STATUS[c.status].label;
+    return `<div class="cand on" data-cand data-id="${c.id}">
+      <div class="cbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="cmain">
+        <div class="ctitle">${esc(c.title)}</div>
+        <div class="ctags">
+          <span class="ctag ${stcls}">${esc(stlabel)}</span>
+          ${c.owner?`<span class="ctag">owner <b>${esc(c.owner)}</b></span>`:""}
+          ${c.due?`<span class="ctag">due <b>${esc(c.due)}</b></span>`:""}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  wrap.classList.add("show");
+}
+function commitCands(btn){
+  const intake=btn.closest(".intake"), brandId=intake.dataset.brand;
+  const b=brandById(brandId); if(!b) return;
+  const routeSel=intake.querySelector("[data-route]").value;
+  const chosenIds=[...intake.querySelectorAll(".cand.on")].map(c=>c.dataset.id);
+  const cands=(parseCache[brandId]||[]).filter(c=>chosenIds.includes(c.id));
+  if(!cands.length){ toast("Nothing selected"); return; }
+
+  if(routeSel==="__new__"){
+    cands.forEach(c=>b.initiatives.push({id:uid(),title:c.title,owner:c.owner,due:c.due,status:c.status,gate:c.status==="done"?4:c.status==="idle"?0:1,open:false,notes:"",milestones:[]}));
+    toast(`${cands.length} initiative${cands.length>1?'s':''} added`);
+  } else {
+    const it=b.initiatives.find(i=>i.id===routeSel);
+    if(it){ cands.forEach(c=>it.milestones.push({id:uid(),text:c.title+(c.owner?` — ${c.owner}`:"")+(c.due?` (${c.due})`:""),done:c.status==="done"})); it.open=true; toast(`${cands.length} milestone${cands.length>1?'s':''} added`); }
+  }
+  intake.querySelector("[data-paste]").value="";
+  delete parseCache[brandId];
+  save(); render();
+}
+
+/* ---- global toolbar ---- */
+$("#expandAll").addEventListener("click",()=>{ const b=activeBrand(); if(!b){toast("Open a brand to expand");return;} b.initiatives.forEach(i=>i.open=true); save(); render(); });
+$("#collapseAll").addEventListener("click",()=>{ const b=activeBrand(); if(b) b.initiatives.forEach(i=>i.open=false); save(); render(); });
+
+$("#exportAll").addEventListener("click",()=>download(`STAYD_gatedocs_ALL_${stamp()}.json`, JSON.stringify(state,null,2)));
+$("#exportBrand").addEventListener("click",()=>{
+  const b=activeBrand(); if(!b){toast("Open a brand tab first");return;}
+  download(`STAYD_gatedocs_${b.name.replace(/\W+/g,'-')}_${stamp()}.json`, JSON.stringify({__brand:true,brand:b},null,2));
+});
+$("#importBtn").addEventListener("click",()=>$("#fileInput").click());
+$("#fileInput").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(data.__brand && data.brand){
+        const idx=state.brands.findIndex(b=>b.id===data.brand.id || b.name===data.brand.name);
+        data.brand.id=data.brand.id||uid();
+        if(idx>=0) state.brands[idx]=data.brand; else state.brands.push(data.brand);
+        state.activeTab=data.brand.id;
+        toast(`Imported brand “${data.brand.name}”`);
+      } else if(data.brands){
+        state=data; toast("Portfolio imported");
+      } else { toast("Unrecognized file"); return; }
+      save(); render();
+    }catch(err){ toast("Could not read that file"); }
+  };
+  r.readAsText(f);
+  e.target.value="";
+});
+
+function download(name,text){
+  const blob=new Blob([text],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast("Exported "+name);
+}
+function stamp(){ const d=new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
+
+let toastT=null;
+function toast(msg){ const el=$("#toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("show"),1900); }
+
+render();
 </script>
 </body>
 </html>
