@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAYD · Gate Documents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E9EBE5; --card:#FBFCFA; --card-2:#F3F5F0;
+    --ink:#16211C; --ink-soft:#4C594F; --ink-faint:#78857B;
+    --line:#D4D8CF; --line-soft:#E3E6DE;
+    --teal:#0F7D6F; --teal-2:#0B5F55; --teal-soft:#E0EFEB;
+    --amber:#B9770F; --amber-soft:#F6EAD3;
+    --muted:#A2ADA3; --muted-soft:#EAEDE7;
+    --shadow:0 1px 2px rgba(22,33,28,.05),0 8px 24px -12px rgba(22,33,28,.14);
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --disp:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--teal);color:#fff}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+  /* header */
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#EDEFE9,#E9EBE5);}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-2);font-weight:600;}
+  .top-inner{padding:28px 0 22px}
+  h1{font-family:var(--disp);font-weight:600;font-size:36px;line-height:1.02;letter-spacing:-.02em;margin:8px 0 6px;}
+  .sub{color:var(--ink-soft);font-size:14.5px;max-width:60ch;}
+
+  /* tab bar */
+  .tabs{position:sticky;top:0;z-index:20;background:rgba(233,235,229,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .tabs-inner{display:flex;gap:2px;overflow-x:auto;padding:0;scrollbar-width:thin}
+  .tabs-inner::-webkit-scrollbar{height:5px}
+  .tabs-inner::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+  .tab{flex:0 0 auto;border:none;background:none;cursor:pointer;padding:13px 15px 11px;font-family:var(--body);font-size:13.5px;
+       font-weight:500;color:var(--ink-soft);position:relative;white-space:nowrap;border-bottom:2.5px solid transparent;transition:.15s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);border-bottom-color:var(--teal)}
+  .tab.rollup{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--teal-2)}
+  .tab.rollup.active{color:var(--teal-2)}
+  .tab .tab-pct{display:inline-block;margin-left:7px;font-family:var(--mono);font-size:10px;color:var(--ink-faint);
+                background:var(--muted-soft);padding:1px 5px;border-radius:4px;vertical-align:middle}
+  .tab.active .tab-pct{background:var(--teal-soft);color:var(--teal-2)}
+
+  /* toolbar */
+  .toolbar{border-bottom:1px solid var(--line);background:var(--card-2)}
+  .toolbar-inner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0}
+  .btn{font-family:var(--body);font-size:12.5px;font-weight:500;border:1px solid var(--line);background:var(--card);color:var(--ink);
+       padding:6px 11px;border-radius:8px;cursor:pointer;transition:.15s;display:inline-flex;gap:6px;align-items:center}
+  .btn:hover{border-color:var(--teal);color:var(--teal-2)}
+  .btn svg{width:13px;height:13px}
+  .toolbar-note{margin-left:auto;font-size:12px;color:var(--ink-faint)}
+  .ctx{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
+  .ctx b{color:var(--teal-2)}
+
+  main{padding-bottom:20px}
+
+  /* view head */
+  .view-head{padding:26px 0 6px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .view-title{font-family:var(--disp);font-weight:600;font-size:26px;letter-spacing:-.015em}
+  .view-sub{color:var(--ink-soft);font-size:13.5px}
+  .brand-meter{margin-left:auto;min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow)}
+  .bm-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .bm-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .bm-pct{font-family:var(--disp);font-weight:600;font-size:23px;line-height:1}
+  .bar{height:8px;border-radius:99px;background:var(--muted-soft);overflow:hidden}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-2));border-radius:99px;width:0;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .bm-foot{margin-top:8px;font-size:11.5px;color:var(--ink-soft)}
+  .bm-foot b{font-family:var(--mono);color:var(--ink)}
+
+  /* segments */
+  .segment{padding:26px 0 0}
+  .seg-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .seg-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:#fff;background:var(--ink);padding:5px 10px;border-radius:6px}
+  .seg-tag.mid{background:var(--amber)}
+  .seg-title{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-.01em}
+  .seg-window{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);margin-left:auto}
+
+  /* initiative card */
+  .init{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+  .init-head{padding:16px 18px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+  .init-head:hover{background:var(--card-2)}
+  .ih-titlerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ih-title{font-family:var(--disp);font-weight:600;font-size:18px;letter-spacing:-.01em}
+  .chip{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;font-weight:500;white-space:nowrap}
+  .chip.time{background:var(--muted-soft);color:var(--ink-soft)}
+  .chip.cadence{background:var(--teal-soft);color:var(--teal-2)}
+  .ih-obj{color:var(--ink-soft);font-size:13px;margin-top:6px;max-width:70ch}
+  .ih-right{display:flex;align-items:center;gap:14px}
+  .ih-pct{font-family:var(--disp);font-weight:600;font-size:16px;text-align:right;min-width:42px}
+  .ih-pct small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase;font-weight:400;margin-top:1px}
+  .caret{width:21px;height:21px;color:var(--ink-faint);transition:transform .25s;flex:0 0 auto}
+  .init.open .caret{transform:rotate(180deg)}
+
+  .rail{display:flex;gap:5px;padding:0 18px 15px}
+  .rail-seg{flex:1}
+  .rail-track{height:9px;border-radius:99px;background:var(--muted-soft);overflow:hidden;border:1px solid var(--line-soft)}
+  .rail-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-2));width:0;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .rail-lab{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+  .rail-code{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.08em;color:var(--ink-soft)}
+  .rail-code .dot{display:inline-block;width:6px;height:6px;border-radius:99px;background:var(--muted);margin-right:5px;vertical-align:middle}
+  .rail-seg.done .rail-code .dot{background:var(--teal)}
+  .rail-seg.active .rail-code .dot{background:var(--amber)}
+  .rail-nm{font-family:var(--mono);font-size:9px;color:var(--ink-faint)}
+
+  .init-body{display:none;border-top:1px solid var(--line-soft);padding:4px 18px 18px}
+  .init.open .init-body{display:block}
+  .block{margin-top:18px}
+  .block-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;display:flex;align-items:center;gap:9px;margin-bottom:11px}
+  .block-h::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+  .agenda{background:var(--card-2);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
+  .agenda summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:13px}
+  .agenda summary::-webkit-details-marker{display:none}
+  .agenda summary .meta{font-family:var(--mono);font-size:10.5px;color:var(--teal-2);font-weight:500}
+  .agenda[open] summary{border-bottom:1px solid var(--line-soft)}
+  .cad-line{padding:10px 14px 0;font-size:12px;color:var(--ink-soft);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .cad-line .k{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint)}
+  .agenda ol{margin:0;padding:10px 14px 13px;counter-reset:ag;list-style:none}
+  .agenda li{position:relative;padding:4px 0 4px 28px;font-size:13px;color:var(--ink)}
+  .agenda li::before{counter-increment:ag;content:counter(ag,decimal-leading-zero);position:absolute;left:0;top:4px;font-family:var(--mono);font-size:10.5px;color:var(--teal-2);font-weight:600}
+
+  .gate{margin-top:12px;border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
+  .gate-h{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--card-2)}
+  .gate-code{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#fff;background:var(--muted);padding:3px 7px;border-radius:5px}
+  .gate.done .gate-code{background:var(--teal)}
+  .gate.active .gate-code{background:var(--amber)}
+  .gate-name{font-family:var(--disp);font-weight:500;font-size:14.5px}
+  .gate-count{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)}
+  .ms{list-style:none;margin:0;padding:2px 0}
+  .ms li{display:flex;gap:10px;align-items:flex-start;padding:8px 13px;cursor:pointer;border-top:1px solid var(--line-soft)}
+  .ms li:first-child{border-top:none}
+  .ms li:hover{background:var(--card-2)}
+  .ck{flex:0 0 auto;width:18px;height:18px;border:1.7px solid var(--line);border-radius:5px;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:.12s;background:var(--card)}
+  .ms li:hover .ck{border-color:var(--teal)}
+  .ck svg{width:11px;height:11px;color:#fff;opacity:0;transition:.12s}
+  .ms li.done .ck{background:var(--teal);border-color:var(--teal)}
+  .ms li.done .ck svg{opacity:1}
+  .ms-label{font-size:13.5px;line-height:1.45}
+  .ms li.done .ms-label{color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--muted)}
+  .ms li .del{margin-left:auto;flex:0 0 auto;width:20px;height:20px;border-radius:5px;display:none;align-items:center;justify-content:center;color:var(--ink-faint)}
+  .ms li.custom .del{display:flex}
+  .ms li .del:hover{background:var(--amber-soft);color:var(--amber)}
+  .ms li .del svg{width:12px;height:12px}
+
+  .add-ms{display:flex;gap:8px;padding:9px 13px;border-top:1px solid var(--line-soft);background:var(--card-2)}
+  .add-ms input{flex:1;border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-family:var(--body);font-size:13px;background:var(--card)}
+  .add-ms input:focus{outline:none;border-color:var(--teal)}
+  .add-ms button{font-family:var(--body);font-size:12.5px;font-weight:500;border:1px solid var(--teal);background:var(--teal);color:#fff;border-radius:7px;padding:6px 12px;cursor:pointer}
+  .add-ms button:hover{background:var(--teal-2);border-color:var(--teal-2)}
+  .gate.custom .gate-code{background:var(--ink)}
+
+  textarea.notes{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line-soft);border-radius:10px;padding:11px 13px;font-family:var(--body);font-size:13px;color:var(--ink);background:var(--card-2);line-height:1.55}
+  textarea.notes:focus{outline:none;border-color:var(--teal);background:var(--card)}
+  textarea.notes::placeholder{color:var(--ink-faint)}
+
+  /* rollup */
+  .rollup-grid{display:grid;gap:16px;margin-top:22px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .panel-h{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:14px}
+  .port-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+  .port-pct{font-family:var(--disp);font-weight:600;font-size:44px;line-height:.9;letter-spacing:-.02em}
+  .port-stats{font-size:13px;color:var(--ink-soft)}
+  .port-stats b{font-family:var(--mono);color:var(--ink)}
+
+  .hm-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
+  table.hm{border-collapse:collapse;width:100%;font-size:12.5px;min-width:560px}
+  table.hm th,table.hm td{border-bottom:1px solid var(--line-soft);padding:0}
+  table.hm thead th{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;background:var(--card-2);padding:9px 8px;text-align:center;vertical-align:bottom}
+  table.hm tbody th{text-align:left;font-weight:500;font-size:13px;white-space:nowrap;color:var(--ink);padding:0 12px;cursor:pointer}
+  table.hm tbody th:hover{color:var(--teal-2)}
+  table.hm tr:last-child th,table.hm tr:last-child td{border-bottom:none}
+  .hm-cell{height:38px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;transition:.12s}
+  .hm-cell:hover{outline:2px solid var(--teal);outline-offset:-2px}
+  .hm-brandpct{font-family:var(--mono);font-size:11px;font-weight:600;text-align:center;color:var(--ink);background:var(--card-2)}
+
+  table.found{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
+  table.found th,table.found td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line-soft)}
+  table.found thead th{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;background:var(--card-2)}
+  table.found tbody th{text-align:left;font-weight:500;font-size:13px;white-space:nowrap;cursor:pointer}
+  table.found tbody th:hover{color:var(--teal-2)}
+  table.found tr:last-child th,table.found tr:last-child td{border-bottom:none}
+  .fdot{width:16px;height:16px;border-radius:5px;margin:0 auto;background:var(--muted-soft);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .fdot.on{background:var(--teal);border-color:var(--teal)}
+  .fdot svg{width:10px;height:10px;color:#fff;opacity:0}
+  .fdot.on svg{opacity:1}
+
+  footer{border-top:1px solid var(--line);margin-top:26px;padding:20px 0 40px;color:var(--ink-faint);font-size:12px}
+  footer .mono{font-family:var(--mono)}
+
+  @media (max-width:640px){
+    h1{font-size:28px}
+    .init-head{grid-template-columns:1fr}
+    .ih-right{justify-content:flex-end}
+    .rail{flex-wrap:wrap;gap:9px 5px}.rail-seg{flex:1 1 40%}
+    .brand-meter{margin-left:0;width:100%}
+    .port-pct{font-size:36px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="eyebrow">Initiative Control · Founders ↔ GMs</div>
+    <h1>Gate Documents</h1>
+    <div class="sub">Stage-gated initiative tracker across all eight STAYD brands. Each brand tab holds its own gates, milestones, and field notes; the Roll-up tab aggregates them into one portfolio view.</div>
+  </div>
+</header>
+
+<div class="tabs"><div class="wrap"><div class="tabs-inner" id="tabbar"></div></div></div>
+
+<div class="toolbar">
+  <div class="wrap toolbar-inner">
+    <span class="ctx" id="ctx"></span>
+    <button class="btn" id="expandAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>Expand</button>
+    <button class="btn" id="collapseAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>Collapse</button>
+    <button class="btn" id="exportBrand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Export brand</button>
+    <button class="btn" id="exportAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 12l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Export all</button>
+    <button class="btn" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12l-4 4m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Import</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none">
+    <span class="toolbar-note">Saves automatically in this browser.</span>
+  </div>
+</div>
+
+<main class="wrap" id="app"></main>
+
+<footer class="wrap">
+  <span class="mono">STAYD_Gate_Documents.html</span> · self-contained · host on GitHub Pages alongside the Pacing &amp; Cadence dashboards.
+  Work a brand in its tab; the Roll-up tab reflects it live. Use <b>Export brand</b> to hand a single brand's state to that brand's project and re-import updates.
+</footer>
+
+<script>
+/* =========================== CONFIG =========================== */
+const BRANDS = ["Beachside VR","Blue Gems","30North","Big Fish","Host2Coast","Haven","Renjoy","Stay Texas"];
+
+const SEGMENTS = [
+  {id:"near", name:"Near Term Initiatives", window:"0–90 days", tag:"NEAR", initIds:["revpar","takerate","journey"]},
+  {id:"mid",  name:"Mid Term Initiatives",  window:"90–180 days", tag:"MID", initIds:["housekeeping","maintenance"]}
+];
+
+/* short column labels for the roll-up heatmap */
+const INIT_SHORT = {revpar:"RevPAR", takerate:"Take Rate", journey:"Guest Journey", housekeeping:"Housekeeping", maintenance:"Maint."};
+
+const INITIATIVES = {
+  revpar:{
+    name:"RevPAR Lift", seg:"near", timeframe:"Weeks 1–12",
+    objective:"Get this brand instrumented, priced, and governed to shared revenue KPIs, then set goals off history and unit-level lift.",
+    cadence:{rhythm:"Weekly", length:"45 min", when:"Mon · 9:00 AM CT", who:"Founders ↔ GM"},
+    agenda:["Pacing review — brand + units (Key Data)","Same-store YoY bridge — genuine RM lift vs. inventory mix / churn","Unit leaderboard + percentile movers (ahead / behind)","Watchlist + days-since-last-booking (stale units)","OTAmiser progress by unit","Goals vs. actual — week / QTD / YTD","Action items + owners"],
+    gates:[
+      {name:"Access & Foundation", ms:["On Key Data enterprise account","On Guesty (reservations stack)","On Wheelhouse (pricing)","On OTAmiser"]},
+      {name:"Cadence & Instrumentation", ms:["OTAmiser meeting established (recurring)","Internal metric definitions set — Wheelhouse + Key Data/Market + Guesty","Pacing reports live","Same-store revenue goals defined","Daily bookings sales report live","Market-level achievement / opportunity view live","Unit leaderboard built on KPIs"]},
+      {name:"Goals & Governance", ms:["Weekly goals set from history + unit lift targets","Quarterly goals set","Annual goals set"]}
+    ]
+  },
+  takerate:{
+    name:"Take Rate", seg:"near", timeframe:"Weeks 2–14",
+    objective:"Grow net take rate through fee structure, channel mix, and ancillary/upsell activation — without breaking the occupancy-first strategy.",
+    cadence:{rhythm:"Bi-weekly", length:"45 min", when:"Every other Tue · 9:00 AM CT", who:"Founders + Finance + GM"},
+    agenda:["Current take rate — brand + units","Fee structure — who pays, how billed, expenses pulled, % vs. flat","Damage waiver structure + improvement","Booking channel mix + cost per channel","Upsell pipeline — Early Arrival / Late Departure / Gap Night","Travel insurance attach rate","Levers + targets vs. actual"],
+    gates:[
+      {name:"Baseline", ms:["Current take rate established","Fee structure documented — who pays, how billed, expenses pulled","Damage waiver structure documented","Booking channel mix established","Cost per channel + billing method established"]},
+      {name:"Target & Strategy", ms:["Goal take rate set","% vs. flat-fee analysis — headroom given occupancy strategy","Levers / opportunities identified & prioritized","Damage waiver improvement plan"]},
+      {name:"Upsell & Ancillary Activation", ms:["Key upsell opportunities identified","Early Arrival / Late Departure / Gap Night automation designed","Targeted discount logic defined per upsell","Travel insurance sales enabled"]}
+    ]
+  },
+  journey:{
+    name:"Guest Journey", seg:"near", timeframe:"Weeks 3–12",
+    objective:"Map the current journey, design the ideal state by segment and property type, and instrument comms + recovery with KPIs.",
+    cadence:{rhythm:"Bi-weekly", length:"45 min", when:"Every other Thu · 9:00 AM CT", who:"Guest Experience lead + GM"},
+    agenda:["Current-state journey walkthrough","Ideal-state design — by segment / add-on / property type","Guest communication KPIs vs. target","Problem / recovery KPIs vs. target","Gaps + fixes + owners"],
+    gates:[
+      {name:"Current State", ms:["Current guest journey mapped (visual representation)"]},
+      {name:"Ideal State Design", ms:["Ideal-state journey built — workflow + waterfall by segment / add-on / property type"]},
+      {name:"Measurement", ms:["Guest communication KPIs defined & instrumented","Guest problem / recovery KPIs defined & instrumented"]}
+    ]
+  },
+  housekeeping:{
+    name:"Housekeeping Process", seg:"mid", timeframe:"Months 3–6",
+    objective:"Standardize HK QA and benchmarks, drive reviews, and lift housekeeping margin to target.",
+    cadence:{rhythm:"Monthly", length:"45 min", when:"1st week of month · 9:00 AM CT", who:"Ops + GM"},
+    agenda:["Existing QA review","KPIs / measurables vs. benchmark","Review-generation efforts","Amenities current state","HK margin — current → benchmark → plan"],
+    gates:[
+      {name:"Current State", ms:["Existing QA documented","Amenities current state documented","Current HK margins captured"]},
+      {name:"Benchmark & Measure", ms:["Measurables / KPIs defined","Benchmark method established","Review-generation efforts in place"]},
+      {name:"Margin Target", ms:["HK margin benchmark target set","Path-to-target plan defined"]}
+    ]
+  },
+  maintenance:{
+    name:"Maintenance", seg:"mid", timeframe:"Months 3–6",
+    objective:"Define maintenance standards and margins and set a margin target.",
+    cadence:{rhythm:"Monthly", length:"30 min", when:"1st week of month · 9:00 AM CT", who:"Ops + GM"},
+    agenda:["Maintenance standards review","Margins vs. target","Open issues + owners"],
+    gates:[
+      {name:"Standards", ms:["Maintenance standards defined"]},
+      {name:"Margins", ms:["Maintenance margins established","Maintenance margin target set"]}
+    ]
+  }
+};
+const INIT_ORDER = ["revpar","takerate","journey","housekeeping","maintenance"];
+
+/* =========================== STATE =========================== */
+const KEY="stayd-gatedocs:v2";
+let STATE=load();
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||blank();}catch(e){return blank();} }
+function blank(){
+  const s={active:"rollup", ms:{}, custom:{}, notes:{}, open:{}};
+  // seed foundation for the two brands we know are on the stack
+  ["Beachside VR","Blue Gems"].forEach(b=>{
+    s.ms[b]={}; s.open[b]={}; s.notes[b]={}; s.custom[b]={};
+    // revpar G1: 0 Key Data, 1 Guesty, 2 Wheelhouse, 3 OTAmiser -> check 0,1,2
+    [0,1,2].forEach(mi=> s.ms[b][msKey("revpar",0,mi)]=true );
+  });
+  return s;
+}
+function save(){ localStorage.setItem(KEY,JSON.stringify(STATE)); }
+function ensureBrand(b){ STATE.ms[b]=STATE.ms[b]||{}; STATE.custom[b]=STATE.custom[b]||{}; STATE.notes[b]=STATE.notes[b]||{}; STATE.open[b]=STATE.open[b]||{}; }
+function msKey(initId,gi,mi){ return `${initId}__g${gi}__m${mi}`; }
+
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+const CARET='<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+const XICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+/* =========================== PROGRESS =========================== */
+function customList(b,initId){ ensureBrand(b); return (STATE.custom[b][initId]||[]); }
+function initTotals(b,initId){
+  ensureBrand(b);
+  const init=INITIATIVES[initId]; let done=0,total=0;
+  init.gates.forEach((g,gi)=>g.ms.forEach((_,mi)=>{ total++; if(STATE.ms[b][msKey(initId,gi,mi)])done++; }));
+  customList(b,initId).forEach(c=>{ total++; if(c.done)done++; });
+  return {done,total,pct: total?Math.round(done/total*100):0};
+}
+function brandTotals(b){
+  let done=0,total=0,gates=0;
+  INIT_ORDER.forEach(id=>{
+    const init=INITIATIVES[id];
+    init.gates.forEach((g,gi)=>{ let gd=0; g.ms.forEach((_,mi)=>{total++;if(STATE.ms[b]&&STATE.ms[b][msKey(id,gi,mi)]){done++;gd++;}}); if(gd===g.ms.length&&g.ms.length)gates++; });
+    customList(b,id).forEach(c=>{total++;if(c.done)done++;});
+  });
+  return {done,total,gates,pct: total?Math.round(done/total*100):0};
+}
+function portfolioTotals(){
+  let done=0,total=0,gates=0;
+  BRANDS.forEach(b=>{const t=brandTotals(b);done+=t.done;total+=t.total;gates+=t.gates;});
+  return {done,total,gates,pct: total?Math.round(done/total*100):0};
+}
+
+/* =========================== TABS =========================== */
+const tabbar=document.getElementById('tabbar');
+function renderTabs(){
+  let html=`<button class="tab rollup ${STATE.active==='rollup'?'active':''}" data-tab="rollup">Roll-up</button>`;
+  BRANDS.forEach(b=>{
+    const p=brandTotals(b).pct;
+    html+=`<button class="tab ${STATE.active===b?'active':''}" data-tab="${b}">${b}<span class="tab-pct">${p}%</span></button>`;
+  });
+  tabbar.innerHTML=html;
+  tabbar.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{ setActive(t.dataset.tab); }));
+}
+function setActive(tab){ STATE.active=tab; save(); renderTabs(); renderMain();
+  const at=tabbar.querySelector('.tab.active'); if(at) at.scrollIntoView({inline:'center',block:'nearest'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* =========================== MAIN RENDER =========================== */
+const app=document.getElementById('app');
+const ctx=document.getElementById('ctx');
+function renderMain(){
+  if(STATE.active==='rollup'){ ctx.innerHTML='Viewing <b>Portfolio roll-up</b>'; renderRollup(); }
+  else { ctx.innerHTML='Editing <b>'+STATE.active+'</b>'; renderBrand(STATE.active); }
+}
+
+/* ---- BRAND VIEW ---- */
+function renderBrand(b){
+  ensureBrand(b);
+  const t=brandTotals(b);
+  app.innerHTML=`<div class="view-head">
+      <div><div class="view-title">${b}</div><div class="view-sub">Update this brand's gates and milestones here. The Roll-up tab reflects changes live.</div></div>
+      <div class="brand-meter">
+        <div class="bm-top"><span class="bm-label">Brand progress</span><span class="bm-pct">${t.pct}%</span></div>
+        <div class="bar"><div class="bar-fill" style="width:${t.pct}%"></div></div>
+        <div class="bm-foot"><b>${t.done}</b>/<b>${t.total}</b> milestones · <b>${t.gates}</b> gates cleared</div>
+      </div>
+    </div>`;
+  SEGMENTS.forEach(seg=>{
+    const s=document.createElement('section'); s.className='segment';
+    s.innerHTML=`<div class="seg-head"><span class="seg-tag ${seg.id==='mid'?'mid':''}">${seg.tag}</span><span class="seg-title">${seg.name}</span><span class="seg-window">${seg.window}</span></div>`;
+    seg.initIds.forEach(id=> s.appendChild(renderInit(b,id)) );
+    app.appendChild(s);
+  });
+}
+
+function renderInit(b,initId){
+  const init=INITIATIVES[initId];
+  const open=!!(STATE.open[b]&&STATE.open[b][initId]);
+  const el=document.createElement('article');
+  el.className='init'+(open?' open':''); el.dataset.init=initId;
+  const c=init.cadence;
+  el.innerHTML=`
+    <div class="init-head">
+      <div class="ih-left">
+        <div class="ih-titlerow"><span class="ih-title">${init.name}</span>
+          <span class="chip time">${init.timeframe}</span><span class="chip cadence">${c.rhythm} · ${c.length}</span></div>
+        <div class="ih-obj">${init.objective}</div>
+      </div>
+      <div class="ih-right"><div class="ih-pct" data-pct>0%<small>complete</small></div>${CARET}</div>
+    </div>
+    <div class="rail" data-rail></div>
+    <div class="init-body">
+      <div class="block"><div class="block-h">Meeting</div>
+        <details class="agenda"><summary><span>Standing agenda</span><span class="meta">${c.rhythm} · ${c.length}</span></summary>
+          <div class="cad-line"><span class="k">When</span> ${c.when} <span class="k">·</span> <span class="k">Owner</span> ${c.who}</div>
+          <ol>${init.agenda.map(a=>`<li>${a}</li>`).join('')}</ol></details></div>
+      <div class="block"><div class="block-h">Gates &amp; milestones</div><div data-gates></div></div>
+      <div class="block"><div class="block-h">Brand-specific milestones · levers</div><div data-custom></div></div>
+      <div class="block"><div class="block-h">Field notes</div>
+        <textarea class="notes" placeholder="Paste from Granola / transcripts, or record ${b}-specific detail, blockers, decisions…">${(STATE.notes[b]&&STATE.notes[b][initId])||''}</textarea></div>
+    </div>`;
+
+  // toggle
+  el.querySelector('.init-head').addEventListener('click',()=>{ el.classList.toggle('open'); STATE.open[b][initId]=el.classList.contains('open'); save(); });
+  // notes
+  el.querySelector('textarea.notes').addEventListener('input',e=>{ STATE.notes[b][initId]=e.target.value; save(); });
+
+  // gates
+  const gh=el.querySelector('[data-gates]');
+  init.gates.forEach((g,gi)=>gh.appendChild(renderGate(b,initId,g,gi)));
+  // custom
+  el.querySelector('[data-custom]').appendChild(renderCustom(b,initId));
+
+  setTimeout(()=>refreshInit(b,initId),0);
+  return el;
+}
+
+function renderGate(b,initId,g,gi){
+  const wrap=document.createElement('div'); wrap.className='gate'; wrap.dataset.gate=gi;
+  const items=g.ms.map((label,mi)=>{
+    const k=msKey(initId,gi,mi); const done=STATE.ms[b][k]?' done':'';
+    return `<li class="${done}" data-k="${k}"><span class="ck">${CHECK}</span><span class="ms-label">${label}</span></li>`;
+  }).join('');
+  wrap.innerHTML=`<div class="gate-h"><span class="gate-code">G${gi+1}</span><span class="gate-name">${g.name}</span><span class="gate-count" data-gc></span></div><ul class="ms">${items}</ul>`;
+  wrap.querySelectorAll('.ms li').forEach(li=>li.addEventListener('click',()=>{
+    const k=li.dataset.k; if(STATE.ms[b][k])delete STATE.ms[b][k]; else STATE.ms[b][k]=true; refreshInit(b,initId); save();
+  }));
+  return wrap;
+}
+
+function renderCustom(b,initId){
+  const wrap=document.createElement('div'); wrap.className='gate custom';
+  const list=customList(b,initId);
+  const items=list.map(c=>`<li class="custom ${c.done?'done':''}" data-cid="${c.id}"><span class="ck">${CHECK}</span><span class="ms-label">${c.label}</span><span class="del" data-del="${c.id}">${XICON}</span></li>`).join('');
+  wrap.innerHTML=`<div class="gate-h"><span class="gate-code">+</span><span class="gate-name">Brand-specific</span><span class="gate-count" data-gcc></span></div>
+    <ul class="ms">${items||''}</ul>
+    <div class="add-ms"><input type="text" placeholder="Add a ${b}-specific milestone or lever…"><button>Add</button></div>`;
+  // toggle custom
+  wrap.querySelectorAll('.ms li').forEach(li=>li.addEventListener('click',e=>{
+    if(e.target.closest('.del')) return;
+    const cid=li.dataset.cid; const it=customList(b,initId).find(x=>x.id===cid); if(it){it.done=!it.done; refreshInit(b,initId); save();}
+  }));
+  wrap.querySelectorAll('[data-del]').forEach(d=>d.addEventListener('click',e=>{
+    e.stopPropagation(); const cid=d.dataset.del; STATE.custom[b][initId]=customList(b,initId).filter(x=>x.id!==cid);
+    renderBrandInitInPlace(b,initId); save();
+  }));
+  const inp=wrap.querySelector('input'), btn=wrap.querySelector('button');
+  const add=()=>{ const v=inp.value.trim(); if(!v)return; ensureBrand(b); STATE.custom[b][initId]=customList(b,initId); STATE.custom[b][initId].push({id:'c_'+Date.now()+'_'+Math.floor(Math.random()*999),label:v,done:false}); inp.value=''; renderBrandInitInPlace(b,initId); save(); };
+  btn.addEventListener('click',add); inp.addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+  return wrap;
+}
+
+/* re-render a single initiative card in place (after custom add/delete) */
+function renderBrandInitInPlace(b,initId){
+  const old=[...app.querySelectorAll('.init')].find(el=>el.dataset.init===initId && STATE.active===b);
+  if(!old) return;
+  const fresh=renderInit(b,initId);
+  fresh.classList.add('open'); STATE.open[b][initId]=true;
+  old.replaceWith(fresh);
+}
+
+function refreshInit(b,initId){
+  const el=[...app.querySelectorAll('.init')].find(x=>x.dataset.init===initId);
+  if(!el) return;
+  const init=INITIATIVES[initId];
+  init.gates.forEach((g,gi)=>{
+    let gd=0;
+    g.ms.forEach((_,mi)=>{ const k=msKey(initId,gi,mi); const on=!!STATE.ms[b][k]; const li=el.querySelector(`.ms li[data-k="${k}"]`); if(li)li.classList.toggle('done',on); if(on)gd++; });
+    const gEl=el.querySelector(`.gate[data-gate="${gi}"]`); const cleared=gd===g.ms.length&&g.ms.length; 
+    if(gEl){ gEl.classList.toggle('done',cleared); gEl.classList.toggle('active',gd>0&&!cleared); gEl.querySelector('[data-gc]').textContent=`${gd}/${g.ms.length}`; }
+  });
+  // custom count
+  const cl=customList(b,initId); const cd=cl.filter(c=>c.done).length;
+  const cc=el.querySelector('[data-gcc]'); if(cc)cc.textContent=cl.length?`${cd}/${cl.length}`:'';
+  // rail (template gates only)
+  const rail=el.querySelector('[data-rail]');
+  rail.innerHTML=init.gates.map((g,gi)=>{
+    let gd=0; g.ms.forEach((_,mi)=>{if(STATE.ms[b][msKey(initId,gi,mi)])gd++;});
+    const pct=g.ms.length?Math.round(gd/g.ms.length*100):0; const cleared=pct===100;
+    return `<div class="rail-seg ${cleared?'done':(gd>0?'active':'')}"><div class="rail-track"><div class="rail-fill" style="width:${pct}%"></div></div>
+      <div class="rail-lab"><span class="rail-code"><span class="dot"></span>G${gi+1}</span><span class="rail-nm">${g.name}</span></div></div>`;
+  }).join('');
+  const st=initTotals(b,initId);
+  const pe=el.querySelector('[data-pct]'); if(pe)pe.innerHTML=`${st.pct}%<small>complete</small>`;
+  // keep tab %s fresh
+  renderTabs();
+}
+
+/* ---- ROLLUP VIEW ---- */
+function heatColor(pct){ return `color-mix(in srgb, var(--teal) ${pct}%, var(--card-2))`; }
+function renderRollup(){
+  const p=portfolioTotals();
+  app.innerHTML=`<div class="view-head"><div>
+      <div class="view-title">Portfolio Roll-up</div>
+      <div class="view-sub">Live aggregate across all ${BRANDS.length} brands. Click any brand or cell to jump into it.</div></div></div>
+    <div class="rollup-grid">
+      <div class="panel">
+        <div class="panel-h">Portfolio progress</div>
+        <div class="port-top"><div class="port-pct">${p.pct}%</div>
+          <div class="port-stats"><b>${p.done}</b> of <b>${p.total}</b> milestones complete<br><b>${p.gates}</b> gates cleared across the portfolio</div></div>
+        <div class="bar"><div class="bar-fill" style="width:${p.pct}%"></div></div>
+      </div>
+      <div class="panel"><div class="panel-h">Progress by brand × initiative</div><div class="hm-wrap" id="hm"></div></div>
+      <div class="panel"><div class="panel-h">Foundation status (RevPAR access)</div><div class="hm-wrap" id="found"></div></div>
+    </div>`;
+  buildHeatmap(); buildFoundation();
+}
+
+function buildHeatmap(){
+  let head=`<tr><th style="text-align:left;padding-left:12px">Brand</th>${INIT_ORDER.map(id=>`<th>${INIT_SHORT[id]}</th>`).join('')}<th>Brand</th></tr>`;
+  let rows=BRANDS.map(b=>{
+    const cells=INIT_ORDER.map(id=>{ const pct=initTotals(b,id).pct; const tc=pct>=55?'#fff':'var(--ink-soft)';
+      return `<td><div class="hm-cell" data-b="${b}" style="background:${heatColor(pct)};color:${tc}">${pct}</div></td>`; }).join('');
+    const bp=brandTotals(b).pct;
+    return `<tr><th data-b="${b}">${b}</th>${cells}<td class="hm-brandpct">${bp}%</td></tr>`;
+  }).join('');
+  const el=document.getElementById('hm');
+  el.innerHTML=`<table class="hm"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  el.querySelectorAll('[data-b]').forEach(x=>x.addEventListener('click',()=>setActive(x.dataset.b)));
+}
+
+function buildFoundation(){
+  const cols=["Key Data","Guesty","Wheelhouse","OTAmiser"]; // revpar G1 order
+  let head=`<tr><th>Brand</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;
+  let rows=BRANDS.map(b=>{
+    ensureBrand(b);
+    const cells=cols.map((_,mi)=>{ const on=!!STATE.ms[b][msKey("revpar",0,mi)];
+      return `<td><div class="fdot ${on?'on':''}">${CHECK}</div></td>`; }).join('');
+    return `<tr><th data-b="${b}">${b}</th>${cells}</tr>`;
+  }).join('');
+  const el=document.getElementById('found');
+  el.innerHTML=`<table class="found"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  el.querySelectorAll('[data-b]').forEach(x=>x.addEventListener('click',()=>setActive(x.dataset.b)));
+}
+
+/* =========================== TOOLBAR =========================== */
+document.getElementById('expandAll').addEventListener('click',()=>{ if(STATE.active==='rollup')return;
+  app.querySelectorAll('.init').forEach(el=>{el.classList.add('open'); STATE.open[STATE.active][el.dataset.init]=true;}); save(); });
+document.getElementById('collapseAll').addEventListener('click',()=>{ if(STATE.active==='rollup')return;
+  app.querySelectorAll('.init').forEach(el=>{el.classList.remove('open'); STATE.open[STATE.active][el.dataset.init]=false;}); save(); });
+
+function download(obj,name){ const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+document.getElementById('exportAll').addEventListener('click',()=>download(STATE,`stayd-gatedocs-ALL-${new Date().toISOString().slice(0,10)}.json`));
+document.getElementById('exportBrand').addEventListener('click',()=>{
+  if(STATE.active==='rollup'){ alert('Open a brand tab first to export just that brand.'); return; }
+  const b=STATE.active; ensureBrand(b);
+  const slice={_brand:b, ms:STATE.ms[b], custom:STATE.custom[b], notes:STATE.notes[b], open:STATE.open[b]};
+  download(slice,`stayd-gatedocs-${b.replace(/\s+/g,'_')}-${new Date().toISOString().slice(0,10)}.json`);
+});
+document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{ try{
+    const inc=JSON.parse(r.result);
+    if(inc._brand){ // single-brand slice
+      const b=inc._brand; ensureBrand(b);
+      STATE.ms[b]=inc.ms||{}; STATE.custom[b]=inc.custom||{}; STATE.notes[b]=inc.notes||{}; STATE.open[b]=inc.open||{};
+      save(); setActive(b);
+    } else { // full state
+      STATE=Object.assign(blank(),inc); STATE.ms=inc.ms||{}; STATE.custom=inc.custom||{}; STATE.notes=inc.notes||{}; STATE.open=inc.open||{};
+      save(); renderTabs(); renderMain();
+    }
+  }catch(err){ alert('That file could not be read as a gate-documents export.'); } };
+  r.readAsText(f); e.target.value='';
+});
+
+/* =========================== INIT =========================== */
+BRANDS.forEach(ensureBrand);
+renderTabs(); renderMain();
+</script>
+</body>
+</html>
